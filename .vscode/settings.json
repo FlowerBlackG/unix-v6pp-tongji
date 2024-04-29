@@ -1,0 +1,12 @@
+{
+    "files.encoding": "gb18030",
+    "files.associations": {
+        "*.def": "cpp",
+        "*.s": "asm-intel-x86-generic",
+        "compare": "cpp",
+        "cstdint": "cpp",
+        "format": "cpp",
+        "getoptandpath.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/g++"
+}
