@@ -9,12 +9,16 @@
 
 #pragma once
 
+#ifdef USE_VESA
+
 #include "sys/types.h"
+#include "Machine.h"
 
 namespace video {
 namespace svga {
 
-const uintptr_t VESA_SCREEN_VADDR = 0xd0000000;
+// 将 VESA Virtual Mem 放到 128MB 以上的区域。
+const uintptr_t VESA_SCREEN_VADDR = Machine::KERNEL_SPACE_START_ADDRESS + 128 * 1024 * 1024;
 
 /**
  *
@@ -129,3 +133,5 @@ inline void putPixel(int32_t x, int32_t y, int32_t color) {
 
 }
 }
+
+#endif

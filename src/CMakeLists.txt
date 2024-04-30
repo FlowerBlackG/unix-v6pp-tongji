@@ -7,6 +7,9 @@
 
 cmake_minimum_required(VERSION 3.29.2)
 
+# 可选项
+option(USE_VESA "enable VESA support and use it as video engine." ON)
+
 
 string(TIMESTAMP build_time_iso8601 UTC)  # example: 2024-04-19T13:39Z
 string(TIMESTAMP build_time_human_readable "%B %d, %Y %H:%M:%S %Z")
@@ -19,6 +22,12 @@ project(UnixV6ppTJ)
 # 指定使用 C++20
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+
+# VESA Support
+if (USE_VESA)
+    add_compile_definitions(USE_VESA)
+endif()
 
 
 # 设置 nasm 汇编

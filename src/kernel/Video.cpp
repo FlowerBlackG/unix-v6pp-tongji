@@ -1,5 +1,9 @@
 #include "Video.h"
 
+#include "vesa/console.h"
+
+#include <libyrosstd/stdio.h>
+
 unsigned short* Diagnose::m_VideoMemory = (unsigned short *)(0xB8000 + 0xC0000000);
 unsigned int Diagnose::m_Row = 10;
 unsigned int Diagnose::m_Column = 0;
@@ -38,6 +42,19 @@ void Diagnose::Write(const char* fmt, ...)
 	{
 		return;
 	}
+
+
+#ifdef USE_VESA
+	char buf[1024];
+	va_list args;
+    va_start(args, fmt);
+    int res = vsprintf(buf, fmt, args);
+    va_end(args);
+	video::console::writeDiagnose(buf);
+
+#else
+
+
 	//使va_arg中存放参数fmt的 “后一个参数” 所在的内存地址
 	//fmt的内容本身是字符串的首地址(这不是我们要的)，而&fmt + 1则是下一个参数的地址
 	//参考UNIX v6中的函数prf.c/printf(fmt, x1,x2,x3,x4,x5,x6,x7,x8,x9,xa,xb,xc)
@@ -85,6 +102,8 @@ void Diagnose::Write(const char* fmt, ...)
 			Diagnose::NextLine();
 		}
 	}
+
+#endif
 }
 
 /*
@@ -93,6 +112,9 @@ void Diagnose::Write(const char* fmt, ...)
 */
 void Diagnose::PrintInt(unsigned int value, int base)
 {
+
+#ifndef USE_VESA
+
 	//因为数字0～9 和 A~F的ASCII码之间不是连续的，所以不能简单通过
 	//ASCII(i) = i + '0'直接计算得到，因此用了Digits字符数组。
 	static char Digits[] = "0123456789ABCDEF";
@@ -101,18 +123,26 @@ void Diagnose::PrintInt(unsigned int value, int base)
 	if((i = value / base) != 0)
 		PrintInt(i ,base);
 	WriteChar(Digits[value % base]);
+#endif
 }
 
 void Diagnose::NextLine()
-{
+{	
+
+#ifndef USE_VESA
 	m_Row += 1;
 	m_Column = 0;
+#endif
 }
 
 void Diagnose::WriteChar(const char ch)
 {
+
+#ifndef USE_VESA
+
 	if(Diagnose::m_Column >= Diagnose::COLUMNS)
 	{
+
 		NextLine();
 	}
 
@@ -123,10 +153,13 @@ void Diagnose::WriteChar(const char ch)
 
 	Diagnose::m_VideoMemory[Diagnose::m_Row * COLUMNS + Diagnose::m_Column] = (unsigned char) ch | Diagnose::COLOR;
 	Diagnose::m_Column++;
+#endif
 }
 
 void Diagnose::ClearScreen()
 {
+
+#ifndef USE_VESA
 	unsigned int i;
 
 	Diagnose::m_Row = Diagnose::SCREEN_ROWS - Diagnose::ROWS;
@@ -136,4 +169,5 @@ void Diagnose::ClearScreen()
 	{
 		Diagnose::m_VideoMemory[i + m_Row * COLUMNS] = (unsigned char) ' ' | Diagnose::COLOR;
 	}
+#endif
 }

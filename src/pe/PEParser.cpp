@@ -6,6 +6,8 @@
 #include "Kernel.h"
 #include "Machine.h"
 
+#include <libyrosstd/string.h>
+
 PEParser::PEParser()
 {
     this->EntryPointAddress = 0;
@@ -56,7 +58,7 @@ unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
 		auto& secHeader = this->sectionHeaders[i];
 		bool wanted = false;
 		for (int secIdx = secIdxInit ; secIdx < wantedSectionsSize; secIdx++) {
-			if (Utility::StrCmp(wantedSections[secIdx], secHeader.Name) == 0) {
+			if (strcmp(wantedSections[secIdx], secHeader.Name) == 0) {
 				wanted = true;
 				break;
 			}
@@ -89,7 +91,7 @@ unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
 		auto& secHeader = this->sectionHeaders[i];
 		bool wanted = false;
 		for (int secIdx = secIdxInit ; secIdx < wantedSectionsSize; secIdx++) {
-			if (Utility::StrCmp(wantedSections[secIdx], secHeader.Name) == 0) {
+			if (strcmp(wantedSections[secIdx], secHeader.Name) == 0) {
 				wanted = true;
 				break;
 			}

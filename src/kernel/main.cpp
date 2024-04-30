@@ -23,7 +23,6 @@
 #include "CMOSTime.h"
 #include "./Lib.h"
 
-#include "config.h"
 #include "vesa/svga.h"
 #include "vesa/console.h"
 
@@ -197,18 +196,23 @@ extern "C" void Delay()
 
 extern "C" void next()
 {
-#if 0 // todo
-	if (USE_VESA) {
+	
+#ifdef USE_VESA
 	    intptr_t vesaModeInfoAddr = Machine::KERNEL_SPACE_START_ADDRESS + 0x7e00;
 		auto& vesaModeInfo = * (video::svga::VbeModeInfo*) vesaModeInfoAddr;
 		video::svga::init(&vesaModeInfo);
 
-		Machine::Instance().InitVESAMemoryMap(vesaModeInfo.framebuffer);
+		Machine::Instance().InitVESAMemoryMap(
+			vesaModeInfo.framebuffer,
+			video::svga::VESA_SCREEN_VADDR,
+			video::svga::bytesPerPixel * vesaModeInfo.height * vesaModeInfo.width
+		);
 
 		video::console::init();
-		video::console::write("VESA enabled.\n", -1, 0xfeba07);
-	}
+		video::console::writeOutput("VESA enabled.\n", -1, 0xfeba07);
+	
 #endif
+	
 
 	//这个时候0M-4M的内存映射已经不被使用了，所以要重新映射用户态的页表，为用户态程序运行做好准备
 	//Machine::Instance().InitUserPageTable();

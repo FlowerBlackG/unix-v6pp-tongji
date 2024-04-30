@@ -1,6 +1,8 @@
 #include "CRT.h"
 #include "IOPort.h"
 
+#include "vesa/console.h"
+
 unsigned short* CRT::m_VideoMemory = (unsigned short *)(0xB8000 + 0xC0000000);
 unsigned int CRT::m_CursorX = 0;
 unsigned int CRT::m_CursorY = 0;
@@ -23,6 +25,13 @@ void CRT::CRTStart(TTy* pTTy)
 
 	while ( (ch = pTTy->t_outq.GetChar()) != TTy::GET_ERROR )
 	{
+
+
+#ifdef USE_VESA
+		video::console::writeOutput(&ch, 1);
+#else
+
+
 		switch (ch)
 		{
 		case '\n':
@@ -53,11 +62,14 @@ void CRT::CRTStart(TTy* pTTy)
 			m_Position++;
 			break;
 		}
+#endif
 	}
 }
 
 void CRT::MoveCursor(unsigned int col, unsigned int row)
 {
+
+#ifndef USE_VESA
 	if ( (col < 0 || col >= CRT::COLUMNS) || (row < 0 || row >= CRT::ROWS) )
 	{
 		return;
@@ -71,10 +83,13 @@ void CRT::MoveCursor(unsigned int col, unsigned int row)
 	IOPort::OutByte(CRT::VIDEO_DATA_PORT, cursorPosition >> 8);
 	IOPort::OutByte(CRT::VIDEO_ADDR_PORT, 15);
 	IOPort::OutByte(CRT::VIDEO_DATA_PORT, cursorPosition & 0xFF);
+#endif
 }
 
 void CRT::NextLine()
 {
+
+#ifndef USE_VESA
 	m_CursorX = 0;
 	m_CursorY += 1;
 
@@ -85,10 +100,13 @@ void CRT::NextLine()
 		ClearScreen();
 	}
 	MoveCursor(m_CursorX, m_CursorY);
+#endif
 }
 
 void CRT::BackSpace()
 {
+	
+#ifndef USE_VESA
 	m_CursorX--;
 
 	/* 移动光标，如果要回到上一行的话 */
@@ -105,10 +123,15 @@ void CRT::BackSpace()
 
 	/* 在光标所在位置填上空格 */
 	m_VideoMemory[m_CursorY * COLUMNS + m_CursorX] = ' ' | CRT::COLOR;
+#endif
 }
 
 void CRT::Tab()
 {
+	
+#ifndef USE_VESA
+	auto oldCursorX = m_CursorX;
+
 	m_CursorX &= 0xFFFFFFF8;	/* 向左对齐到前一个Tab边界 */
 	m_CursorX += 8;
 	// const int TabWidth = 10;
@@ -116,12 +139,15 @@ void CRT::Tab()
 	// m_CursorX += TabWidth;
 	if ( m_CursorX >= CRT::COLUMNS )
 		NextLine();
-	else
+	else {
 		MoveCursor(m_CursorX, m_CursorY);
+	}
+#endif
 }
 
 void CRT::WriteChar(char ch)
 {
+#ifndef USE_VESA
 	m_VideoMemory[m_CursorY * CRT::COLUMNS + m_CursorX] = (unsigned char) ch | CRT::COLOR;
 	m_CursorX++;
 	
@@ -130,15 +156,22 @@ void CRT::WriteChar(char ch)
 		NextLine();
 	}
 	MoveCursor(m_CursorX, m_CursorY);
+#endif
 }
 
 void CRT::ClearScreen()
 {
+
+#ifdef USE_VESA
+	// todo
+#else
+
 	unsigned int i;
 
 	for ( i = 0; i < COLUMNS * ROWS; i++ )
 	{
 		m_VideoMemory[i] = (unsigned short)' ' | CRT::COLOR;
 	}
+#endif
 }
 

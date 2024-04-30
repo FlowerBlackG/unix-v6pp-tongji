@@ -22,6 +22,7 @@ public:
 	/* 将输出缓存队列中的内容输出到屏幕上 */
 	static void CRTStart(TTy* pTTy);
 
+protected:
 	/* 改变光标位置 */
 	static void MoveCursor(unsigned int x, unsigned int y);
 
@@ -37,6 +38,7 @@ public:
 	/* 显示单个字符 */
 	static void WriteChar(char ch);
 
+public:
 	/* 清除屏幕 */
 	static void ClearScreen();
 

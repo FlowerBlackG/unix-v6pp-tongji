@@ -34,13 +34,15 @@ vesa_video_mode_code equ (vesa_video_mode | 0x4000)
 ;section .code16
 [BITS 16]
 start:
+
+%ifdef USE_VESA
 		; 读取 VESA 信息。
-;		xor ax, ax
-;		mov es, ax
-;		mov di, 0x7e00
-;		mov ax, 0x4f01
-;		mov cx, vesa_video_mode
-;		int 0x10
+		xor ax, ax
+		mov es, ax
+		mov di, 0x7e00
+		mov ax, 0x4f01
+		mov cx, vesa_video_mode
+		int 0x10
 
 		; 设置屏幕模式为文本模式，并清空屏幕。
 		; 中断指令号为 10H，当 AH=0H 时表示设置显示模式，模式具体为 AL。
@@ -49,9 +51,10 @@ start:
 		; AX=0x4F02, BX=0x4180 表示 1440×900 32位色
 		; AX=0x4F02, BX=0x4143 表示 800×600 32位色
 
-;		mov bx, vesa_video_mode_code
-;		mov ax, 0x4F02
-;		int 0x10  ; 取消本行注释以启用 VESA。
+		mov bx, vesa_video_mode_code
+		mov ax, 0x4F02
+		int 0x10
+%endif USE_VESA
 
 
 		lgdt [gdtr]
@@ -68,6 +71,14 @@ start:
 		mov eax, cr0;
 		or eax, 1;
 		mov cr0, eax
+
+		; enable PSE so we can use 2MB page :D  -- added by gty
+		; See:
+		;   https://www.wikiwand.com/en/Control_register#CR4
+		;   https://wiki.osdev.org/Paging
+		mov eax, cr4
+		or eax, 0b10000
+		mov cr4, eax
 				
 		jmp dword 0x8:_startup ;
 
@@ -169,7 +180,7 @@ _load_sector:
 	retn 8		
 		
 ;section .data
-KERNEL_SIZE		equ		180	    
+KERNEL_SIZE		equ		(198)	    
 
 gdt:		
 		dw	0x0000

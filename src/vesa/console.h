@@ -9,11 +9,16 @@
 
 #pragma once
 
+#ifdef USE_VESA
+
 #include "sys/types.h"
 #include "vesa/svga.h"
 
 namespace video {
 namespace console {
+
+const int32_t OUTPUT_DEFAULT_COLOR = 0xffffff;
+const int32_t DIAGNOSE_DEFAULT_COLOR = 0xf8df70;
 
 /**
  * ≥ı ºªØ°£
@@ -21,7 +26,10 @@ namespace console {
  */
 void init();
 
-int32_t write(const char* buf, int32_t len = -1, int32_t color = 0xffffff);
+int32_t writeOutput(const char* buf, int32_t len = -1, int32_t color = OUTPUT_DEFAULT_COLOR);
+int32_t writeDiagnose(const char* buf, int32_t len = -1, int32_t color = DIAGNOSE_DEFAULT_COLOR);
 
 }
 }
+
+#endif

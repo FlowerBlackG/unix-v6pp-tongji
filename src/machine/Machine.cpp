@@ -9,7 +9,6 @@
 #include "PageManager.h"
 
 #include "vesa/svga.h"
-#include "config.h"
 
 Machine Machine::instance;	/*单态类实例的定义*/
 
@@ -213,42 +212,46 @@ void Machine::InitPageDirectory()
 }
 
 
-#if 0 // todo
-void Machine::InitVESAMemoryMap(uintptr_t vMemAddr) {
-	// todo: 这里的写法很不灵活。应该改成从传参读取的。
-	const int vMemPages = 576;
+#ifdef USE_VESA
+void Machine::InitVESAMemoryMap(uintptr_t videoMemAddr, uintptr_t virtualMemAddr, size_t videoMemSize) {
+	
+	uintptr_t videoMemBegin = videoMemAddr;
+	videoMemBegin /= PageTable::SIZE_PER_PAGETABLE_MAP;
+	videoMemBegin *= PageTable::SIZE_PER_PAGETABLE_MAP;
 
-	for (int i = 0; i < vMemPages; i++) {
-		PageDirectory* pPageDirectory = (PageDirectory*)(PAGE_DIRECTORY_BASE_ADDRESS + KERNEL_SPACE_START_ADDRESS);
-		unsigned int pageTableIdx = video::svga::VESA_SCREEN_VADDR / PageTable::SIZE_PER_PAGETABLE_MAP + i;
-		auto& entry = pPageDirectory->m_Entrys[pageTableIdx];
+	uintptr_t virtualMemBegin = virtualMemAddr - (videoMemAddr - videoMemBegin);
+	if (virtualMemBegin % PageTable::SIZE_PER_PAGETABLE_MAP) {
+		// todo: panic!
+		return;
+	}
+
+	uintptr_t videoMemEnd = (videoMemAddr + videoMemSize + PageTable::SIZE_PER_PAGETABLE_MAP - 1);
+	videoMemEnd /= PageTable::SIZE_PER_PAGETABLE_MAP;
+	videoMemEnd *= PageTable::SIZE_PER_PAGETABLE_MAP;
+	
+
+	PageDirectory* pageDir = (PageDirectory*) (PAGE_DIRECTORY_BASE_ADDRESS + KERNEL_SPACE_START_ADDRESS);
+	for (uintptr_t addr = videoMemBegin; addr < videoMemEnd; addr += PageTable::SIZE_PER_PAGETABLE_MAP) {
+		uintptr_t vAddr = addr + virtualMemBegin - videoMemBegin;
+		auto& entry = pageDir->m_Entrys[vAddr / PageTable::SIZE_PER_PAGETABLE_MAP];
 		entry.m_UserSupervisor = 0;
 		entry.m_Present = 1;
 		entry.m_ReadWriter = 1;
-		entry.m_PageTableBaseAddress = (VESA_PAGE_TABLE_BASE_ADDR + PageManager::PAGE_SIZE * i) >> 12;
+		entry.m_PageSize = 1;
+
+		entry.m_PageTableBaseAddress = addr >> 12;
 	}
 
-	
-	for (int i = 0; i < vMemPages; i++) {
-		PageTable* pPageTable = (PageTable*)(VESA_PAGE_TABLE_BASE_ADDR + KERNEL_SPACE_START_ADDRESS + i * PageManager::PAGE_SIZE);
-		
-		for ( unsigned int i = 0; i < PageTable::ENTRY_CNT_PER_PAGETABLE; i++ )
-		{
-			pPageTable->m_Entrys[i].m_UserSupervisor = 0;
-			pPageTable->m_Entrys[i].m_Present = 1;
-			pPageTable->m_Entrys[i].m_ReadWriter = 1;
-			pPageTable->m_Entrys[i].m_PageBaseAddress = vMemAddr / PageManager::PAGE_SIZE + i;
-		}
-	}
 
 	__asm (
         "mov %%eax, %%cr3"
         :
         : "a" (Machine::PAGE_DIRECTORY_BASE_ADDRESS)
     );
-	
 }
 #endif
+
+
 
 void Machine::InitUserPageTable()
 {

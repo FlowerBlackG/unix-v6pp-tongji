@@ -41,35 +41,6 @@ class Utility
 public:
 	static void MemCopy(unsigned long src, unsigned long des, unsigned int count);
 
-	/**
-	 * 
-	 * 这个函数和 MemCopy 的区别：
-	 *   MemCopy 是原版代码里面的。
-	 *   MemCpy 是 yros 里的版本，api 和语言标准一致，且针对已对齐地址会启用快速拷贝。
-	 * 
-	 * https://github.com/FlowerBlackG/YurongOS/blob/master/src/lib/string.cpp
-	 */
-	static void* MemCpy(void* dest, const void* src, size_t count);
-	
-	/**
-	 * 
-	 * https://github.com/FlowerBlackG/YurongOS/blob/master/src/lib/string.cpp
-	 */
-	static void* MemSet(void* dest, int ch, size_t count);
-
-	/**
-	 * 
-	 * https://github.com/FlowerBlackG/YurongOS/blob/master/src/lib/string.cpp
-	 */
-	static int MemCmp(const void* lhs, const void* rhs, long count);
-
-	
-	/**
-	 * 
-	 * https://github.com/FlowerBlackG/YurongOS/blob/master/src/lib/string.cpp
-	 */
-	static int StrCmp(const char* lhs, const char* rhs);
-	
 	static int CaluPageNeed(unsigned int memoryneed, unsigned int pagesize);
 
 	static void StringCopy(char* src, char* dst);

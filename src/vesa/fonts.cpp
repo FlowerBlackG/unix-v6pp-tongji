@@ -7,6 +7,8 @@
  * 创建于 2023年7月6日 上海市嘉定区安亭镇
  */
 
+#ifdef USE_VESA
+
 #include "./fonts.h"
 
 namespace video {
@@ -308,3 +310,5 @@ uint8_t fonts[] = {
 
 }
 }
+
+#endif

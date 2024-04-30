@@ -36,14 +36,14 @@ build-programs:
 	mkdir -p target/objs/apps
 	mkdir -p build/apps && cd build/apps \
 	&& cmake -G"Unix Makefiles" ../../programs
-	cd build/apps && cmake --build . -- -j 1
+	cd build/apps && cmake --build . -- -j 4
 
 
 .PHONY: build-lib
 build-lib:
 	mkdir -p build/lib && cd build/lib \
 	&& cmake -G"Unix Makefiles" ../../lib/src
-	cd build/lib && cmake --build . -- -j 1
+	cd build/lib && cmake --build . -- -j 4
 	mkdir -p target/objs
 	cp build/lib/libv6pptongji.a target/objs/libv6pptongji.a
 
@@ -52,7 +52,7 @@ build-lib:
 build-shell:
 	mkdir -p build/shell && cd build/shell \
 	&& cmake -G"Unix Makefiles" ../../shell
-	cd build/shell && cmake --build . -- -j 1
+	cd build/shell && cmake --build . -- -j 2
 	mkdir -p target/objs
 	cp build/shell/Shell.exe target/objs/
 	objcopy --remove-section .comment target/objs/Shell.exe
@@ -87,7 +87,7 @@ bochs:
 
 
 QEMU := qemu-system-i386 
-QEMU += -m 32M 
+QEMU += -m 64M 
 QEMU += -rtc base=localtime 
 QEMU += -d cpu_reset -D target/qemu.log 
 QEMU += -machine pc 

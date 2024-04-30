@@ -9,6 +9,8 @@
 
 #pragma once
 
+#ifdef USE_VESA
+
 #include "sys/types.h"
 
 namespace video {
@@ -18,3 +20,5 @@ extern uint8_t fonts[];
 
 }
 }
+
+#endif

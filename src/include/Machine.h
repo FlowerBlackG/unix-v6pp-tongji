@@ -31,7 +31,7 @@ public:
 	static const unsigned long PAGE_DIRECTORY_BASE_ADDRESS = 0x200000;
 	static const unsigned long KERNEL_PAGE_TABLE_BASE_ADDRESS = 0x201000;
 
-	// todo: static const unsigned long VESA_PAGE_TABLE_BASE_ADDR = 0x2000000;  // place it over 32M
+	static const unsigned long VESA_PAGE_TABLE_BASE_ADDR = 0x2000000;  // place it over 32M
 
 	static const unsigned long USER_PAGE_TABLE_BASE_ADDRESS = 0x202000;
 	static const unsigned long USER_PAGE_TABLE_CNT = 2;
@@ -53,7 +53,7 @@ public:
 	 * VESA Support
 	 *   added by 2051565 GTY
 	 */
-	// todo : void InitVESAMemoryMap(uintptr_t vMemAddr);
+	void InitVESAMemoryMap(uintptr_t videoMemAddr, uintptr_t virtualMemAddr, size_t videoMemSize);
 
 	void InitPageDirectory();
 	void InitUserPageTable();
