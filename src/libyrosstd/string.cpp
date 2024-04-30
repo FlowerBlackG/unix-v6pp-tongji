@@ -7,7 +7,7 @@
 
 #include <libyrosstd/string.h>
 
-#if 0
+
 char* strcpy(char* dest, const char* src) {
     char* pDest = dest;
     const char* pSrc = src;
@@ -35,9 +35,8 @@ char* strncpy(char* dest, const char* src, size_t count) {
 
     return dest;
 }
-#endif
 
-#if 0
+
 char* strcat(char* dest, const char* src) {
     strcpy(dest + strlen(dest), src);
     return dest;
@@ -47,10 +46,8 @@ char* strncat(char* dest, const char* src, size_t count) {
     strncpy(dest + strlen(dest), src, count);
     return dest;
 }
-#endif
 
 
-#if 0
 size_t strlen(const char* str) {
     // 参考 glibc 的实现方式。
     // 解释见：https://blog.csdn.net/m0_62405272/article/details/125600719
@@ -91,14 +88,6 @@ size_t strlen(const char* str) {
         }
     }
 }
-#else
-size_t strlen(const char* str) {
-    const char* p = str;
-    while (*(p++))
-        ;
-    return uintptr_t(p) - uintptr_t(str) - 1;
-}
-#endif
 
 
 int strcmp(const char* lhs, const char* rhs) {
@@ -117,7 +106,7 @@ int strcmp(const char* lhs, const char* rhs) {
     return *(const unsigned char*) pLhs - *(const unsigned char*) pRhs;
 }
 
-#if 0
+
 int strncmp(const char* lhs, const char* rhs, size_t count) {
     const char* pLhs = lhs;
     const char* pRhs = rhs;
@@ -282,9 +271,7 @@ void* memchr(const void* ptr, int ch, size_t count) {
 
     return nullptr;
 }
-#endif
 
-#if 0
 int memcmp(const void* lhs, const void* rhs, size_t count) {
     auto pLhs = (const unsigned char*) lhs;
     auto pRhs = (const unsigned char*) rhs;
@@ -299,7 +286,7 @@ int memcmp(const void* lhs, const void* rhs, size_t count) {
 
     return 0;
 }
-#endif
+
 
 void* memset(void* dest, int ch, size_t count) {
     char b = (char) ch;

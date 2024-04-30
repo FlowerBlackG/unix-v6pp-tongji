@@ -1,6 +1,6 @@
 #include "SwapperManager.h"
 
-unsigned int SwapperManager::SWAPPER_ZONE_START_BLOCK = 18000;
+unsigned int SwapperManager::SWAPPER_ZONE_START_BLOCK = 18200;
 unsigned int SwapperManager::SWAPPER_ZONE_SIZE = 2000;
 
 SwapperManager::SwapperManager(Allocator *pAllocator)

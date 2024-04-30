@@ -13,7 +13,6 @@
 #include <libyrosstd/stdio.h>
 #include <libyrosstd/string.h>
 
-#if 0
 int sprintf(char* buffer, const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -21,7 +20,6 @@ int sprintf(char* buffer, const char* format, ...) {
     va_end(args);
     return res;
 }
-#endif
 
 int vsprintf(char* buffer, const char* format, va_list args) {
     

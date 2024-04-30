@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.29.2)
 
 # ¿ÉÑ¡Ïî
-option(USE_VESA "enable VESA support and use it as video engine." ON)
+option(USE_VESA "enable VESA support and use it as console's backend." ON)
 
 
 string(TIMESTAMP build_time_iso8601 UTC)  # example: 2024-04-19T13:39Z

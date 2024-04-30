@@ -72,17 +72,17 @@ public:
 	/* static consts */
 	static const int NMOUNT = 5;			/* 系统中用于挂载子文件系统的装配块数量 */
 
-	static const int SUPER_BLOCK_SECTOR_NUMBER = 200;	/* 定义SuperBlock位于磁盘上的扇区号，占据200，201两个扇区。 */
+	static const int SUPER_BLOCK_SECTOR_NUMBER = 400;	/* 定义SuperBlock位于磁盘上的扇区号，占据400，401两个扇区。 */
 
 	static const int ROOTINO = 1;			/* 文件系统根目录外存Inode编号 */
 
 	static const int INODE_NUMBER_PER_SECTOR = 8;		/* 外存INode对象长度为64字节，每个磁盘块可以存放512/64 = 8个外存Inode */
-	static const int INODE_ZONE_START_SECTOR = 202;		/* 外存Inode区位于磁盘上的起始扇区号 */
-	static const int INODE_ZONE_SIZE = 1024 - 202;		/* 磁盘上外存Inode区占据的扇区数 */
+	static const int INODE_ZONE_START_SECTOR = 402;		/* 外存Inode区位于磁盘上的起始扇区号 */
+	static const int INODE_ZONE_SIZE = 1224 - 402;		/* 磁盘上外存Inode区占据的扇区数 */
 
-	static const int DATA_ZONE_START_SECTOR = 1024;		/* 数据区的起始扇区号 */
-	static const int DATA_ZONE_END_SECTOR = 18000 - 1;	/* 数据区的结束扇区号 */
-	static const int DATA_ZONE_SIZE = 18000 - DATA_ZONE_START_SECTOR;	/* 数据区占据的扇区数量 */
+	static const int DATA_ZONE_START_SECTOR = 1224;		/* 数据区的起始扇区号 */
+	static const int DATA_ZONE_END_SECTOR = 18200 - 1;	/* 数据区的结束扇区号 */
+	static const int DATA_ZONE_SIZE = 18200 - DATA_ZONE_START_SECTOR;	/* 数据区占据的扇区数量 */
 
 	/* Functions */
 public:

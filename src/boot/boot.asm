@@ -180,7 +180,7 @@ _load_sector:
 	retn 8		
 		
 ;section .data
-KERNEL_SIZE		equ		(198)	    
+KERNEL_SIZE		equ		(398)	    
 
 gdt:		
 		dw	0x0000
