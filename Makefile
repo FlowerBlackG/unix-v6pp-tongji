@@ -24,49 +24,52 @@ help:
 
 .PHONY: prepare
 prepare:
-	mkdir -p build/kernel && cd build/kernel \
-	&& cmake -G"Unix Makefiles" ../../src
-	mkdir -p target
-	mkdir -p target/objs
 	mkdir -p target/objs/asm-dump
 
 
 .PHONY: build-programs
-build-programs:
+build-programs: prepare
 	mkdir -p target/objs/apps
 	mkdir -p build/apps && cd build/apps \
-	&& cmake -G"Unix Makefiles" ../../programs
-	cd build/apps && cmake --build . -- -j 4
+	&& cmake -G"Ninja" ../../programs && \
+	cmake --build . -- -j 4
 
 
 .PHONY: build-lib
-build-lib:
+build-lib: prepare
 	mkdir -p build/lib && cd build/lib \
-	&& cmake -G"Unix Makefiles" ../../lib/src
-	cd build/lib && cmake --build . -- -j 4
+	&& cmake -G"Ninja" ../../lib/src \
+	&& cmake --build . -- -j 4
 	mkdir -p target/objs
 	cp build/lib/libv6pptongji.a target/objs/libv6pptongji.a
 
 
 .PHONY: build-shell
-build-shell:
+build-shell: prepare
 	mkdir -p build/shell && cd build/shell \
-	&& cmake -G"Unix Makefiles" ../../shell
-	cd build/shell && cmake --build . -- -j 2
+	&& cmake -G"Ninja" ../../shell && \
+	cmake --build . -- -j 2
 	mkdir -p target/objs
 	cp build/shell/Shell.exe target/objs/
 	objcopy --remove-section .comment target/objs/Shell.exe
-	objdump -d target/objs/Shell.exe > target/asm-dump/Shell.exe.text.asm
-	objdump -D target/objs/Shell.exe > target/asm-dump/Shell.exe.full.asm
+#	objdump -d target/objs/Shell.exe > target/asm-dump/Shell.exe.text.asm  # optional
+#	objdump -D target/objs/Shell.exe > target/asm-dump/Shell.exe.full.asm  # optional
 
 
-.PHONY: build
-build: prepare build-lib build-programs build-shell
-	cd build/kernel && cmake --build . -- -j 1
+.PHONY: build-kernel
+build-kernel: prepare
+	mkdir -p build/kernel && cd build/kernel \
+	&& cmake -G"Ninja" ../../src && \
+	cmake --build . -- -j 1
 
 
-.PHONY: deploy
-deploy: build
+.PHONY: build-full
+build-full: prepare build-lib build-programs build-shell build-kernel
+
+
+
+.PHONY: deploy-full
+deploy-full: build-full
 	mkdir -p target/img-workspace
 	mkdir -p target/img-workspace/programs/bin
 	mkdir -p target/img-workspace/programs/etc
@@ -107,11 +110,11 @@ qemug-no-rebuild:
 
 
 .PHONY: qemu
-qemu: deploy qemu-no-rebuild
+qemu: deploy-full qemu-no-rebuild
 
 
 .PHONY: qemug
-qemug: deploy qemug-no-rebuild
+qemug: deploy-full qemug-no-rebuild
 
 
 .PHONY: clean
@@ -121,6 +124,9 @@ clean:
 
 
 .PHONY: all
-all: deploy
+all: deploy-full
 	@echo -e "\033[32mbuild success (unix-v6pp-tongji).\033[0m"
 
+
+.PHONY: full
+full: deploy-full

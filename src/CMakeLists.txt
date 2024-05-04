@@ -123,16 +123,18 @@ add_custom_command(
 
 # dump kernel.exe to assembly
 file(MAKE_DIRECTORY ${ASM_DUMP_DIR})
-add_custom_command(
-    TARGET kernel POST_BUILD
-    COMMAND
-        objdump -d ${KERNEL_EXE_TARGET} > ${ASM_DUMP_DIR}/kernel.bin.text.asm
-)
-add_custom_command(
-    TARGET kernel POST_BUILD
-    COMMAND
-        objdump -D ${KERNEL_EXE_TARGET} > ${ASM_DUMP_DIR}/kernel.bin.full.asm
-)
+
+# (optional)
+# add_custom_command(
+#     TARGET kernel POST_BUILD
+#     COMMAND
+#         objdump -d ${KERNEL_EXE_TARGET} > ${ASM_DUMP_DIR}/kernel.bin.text.asm
+# )
+# add_custom_command(
+#     TARGET kernel POST_BUILD
+#     COMMAND
+#         objdump -D ${KERNEL_EXE_TARGET} > ${ASM_DUMP_DIR}/kernel.bin.full.asm
+# )
 
 # convert kernel.exe to binary format
 add_custom_command(

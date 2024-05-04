@@ -74,10 +74,14 @@ foreach(src IN LISTS C_SOURCE_FILES)
 
     set(ASM_DUMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../target/asm-dump/apps")
     file(MAKE_DIRECTORY ${ASM_DUMP_DIR})
-    add_custom_command(
-        TARGET ${exeName} POST_BUILD
-        COMMAND
-            objdump -D ${APPS_BIN_DIR}/${exeName} > ${ASM_DUMP_DIR}/${exeName}.full.asm
-    )
+
+#    (optional)
+#    add_custom_command(
+#        TARGET ${exeName} POST_BUILD
+#        COMMAND
+#            objdump -D ${APPS_BIN_DIR}/${exeName} > ${ASM_DUMP_DIR}/${exeName}.full.asm
+#    )
+
 endforeach()
+
 
