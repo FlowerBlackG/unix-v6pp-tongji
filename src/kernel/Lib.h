@@ -5,7 +5,7 @@
 
 int lib_creat(char* pathname, unsigned int mode);
 
-int lib_open(char* pathname, unsigned int mode);
+int lib_open(const char* pathname, unsigned int mode);
 
 int lib_close(int fd);
 

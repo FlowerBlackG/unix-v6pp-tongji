@@ -24,7 +24,7 @@ int main1()
 		InitCommandTree();
 		printf("[%s]#", curPath);
 		gets( lineInput );		
-		if ( strcmp( "shutdown", lineInput ) == 0 )
+		if ( strcmp( (unsigned char*) "shutdown", (unsigned char*) lineInput ) == 0 )
 		{
 			syncFileSystem();
 			printf("You can safely turn down the computer now!\n");

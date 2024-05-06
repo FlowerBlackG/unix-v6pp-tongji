@@ -40,7 +40,7 @@ typedef uint32_t va_list;
 
 #define va_end(ap) (ap = (va_list) NULL)
 
-#warning x86_32 mode is not recommended.
+// if yros, then emit: #warning x86_32 mode is not recommended.  
 
 #else
 

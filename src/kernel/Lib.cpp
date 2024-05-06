@@ -21,7 +21,7 @@ name：打开文件路径的地址
 mode：打开文件模式，采用读、写还是读写的方式
 返回值：成功则返回进程打开文件号，失败返回-1
 */
-int lib_open(char* pathname, unsigned int mode)
+int lib_open(const char* pathname, unsigned int mode)
 {
 	int res;
 	__asm__ __volatile__ ("int $0x80":"=a"(res):"a"(5),"b"(pathname),"c"(mode));

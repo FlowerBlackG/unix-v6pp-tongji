@@ -11,7 +11,7 @@ extern int _sprintf(char* buffer, char* fmt, va pva);
 void printf(char* fmt, ... )
 {
 	char buffer[1024];
-	va pva = getvahead(fmt);
+	va pva = (va) getvahead(fmt);
 	int count = _sprintf(buffer, fmt, pva);	
 	write(STDOUT, buffer, count);
 }

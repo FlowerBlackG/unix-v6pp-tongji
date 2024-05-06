@@ -26,6 +26,9 @@
 #include "vesa/svga.h"
 #include "vesa/console.h"
 
+#include "libyrosstd/sys/types.h"
+#include "libyrosstd/string.h"
+
 bool isInit = false;
 
 extern "C" void MasterIRQ7()
@@ -99,7 +102,7 @@ static void callDtors()
 }
 
 
-int main0(void)
+void main0(void)
 {
 	Machine& machine = Machine::Instance();
 
@@ -132,7 +135,7 @@ int main0(void)
 	 */
 
 	//使用0x10段寄存器
-	__asm__ __volatile__
+	__asm
 		(" \
 		mov $0x10, %ax\n\t \
 		mov %ax, %ds\n\t \
@@ -141,7 +144,7 @@ int main0(void)
 		);
 
 	//将初始化堆栈设置为0xc0400000，这里破坏了封装性，考虑使用更好的方法
-	__asm__ __volatile__
+	__asm
 		(
 		" \
 		mov $0xc0400000, %ebp \n\t \
@@ -149,6 +152,7 @@ int main0(void)
 		jmp $0x8, $next"
 		);
 	
+	__asm ("ud2");
 }
 
 /* 应用程序从main返回，进程就终止了，这全是runtime()的功劳。没有它，就只能用exit终止进程了。xV6没这个功能^-^ */
@@ -160,12 +164,12 @@ extern "C" void runtime()
 	3. eax中存放可执行程序EntryPoint
 	4~6. exit(0)结束进程
 	*/
-	__asm__ __volatile__("	leave;	\
-							movl %%esp, %%ebp;	\
-							call *%%eax;		\
-							movl $1, %%eax;	\
-							movl $0, %%ebx;	\
-							int $0x80"::);
+	__asm("	leave;	\
+			movl %%esp, %%ebp;	\
+			call *%%eax;		\
+			movl $1, %%eax;	\
+			movl $0, %%ebx;	\
+			int $0x80"::);
 }
 
 /*
@@ -176,11 +180,12 @@ extern "C" void ExecShell()
 {
 	int argc = 0;
 	char* argv = NULL;
-	char* pathname = "/Shell.exe";
-	__asm__ __volatile__ ("int $0x80"::"a"(11/* execv */),"b"(pathname),"c"(argc),"d"(argv));
+	const char* pathname = "/Shell.exe";
+	__asm ("int $0x80"::"a"(11/* execv */),"b"(pathname),"c"(argc),"d"(argv));
 	return;
 }
 
+#if 0
 /* 此函数test文件夹中的代码会引用，但貌似可以删除，记得把它删掉*/
 extern "C" void Delay()
 {
@@ -193,6 +198,7 @@ extern "C" void Delay()
 			c++;
 		}
 }
+#endif
 
 extern "C" void next()
 {
@@ -262,7 +268,7 @@ extern "C" void next()
 	us.u_cdir = g_InodeTable.IGet(DeviceManager::ROOTDEV, 1);
 	//us.u_cdir = g_InodeTable.IGet(DeviceManager::ROOTDEV, FileSystem::ROOTINO);
 	us.u_cdir->i_flag &= (~Inode::ILOCK);
-	Utility::StringCopy("/", us.u_curdir);
+	strcpy(us.u_curdir, "/");
 
 	/* 打开TTy设备 */
 	int fd_tty = lib_open("/dev/tty1", File::FREAD);
@@ -303,7 +309,7 @@ extern "C" void next()
 
 		/* 1#进程回用户态，执行exec("shell.exe")系统调用*/
 		MoveToUserStack();
-		__asm__ __volatile__ ("call *%%eax" :: "a"((unsigned long)ExecShell - 0xC0000000));   //要访问用户栈，所以一定要有映射！
+		__asm ("call *%%eax" :: "a"((unsigned long)ExecShell - 0xC0000000));   //要访问用户栈，所以一定要有映射！
 	}
 }
 

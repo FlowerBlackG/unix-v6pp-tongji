@@ -10,7 +10,7 @@ char *malloc_end = NULL;
 typedef struct flist {
    unsigned int size;
    struct flist *nlink;
-};
+} flist;
 
 struct flist *malloc_head = NULL;
 
@@ -19,9 +19,9 @@ void* malloc(unsigned int size)
     if (malloc_begin == NULL)
     {
         /* code */
-        malloc_begin = sbrk(0);
-        malloc_end = sbrk(PAGE_SIZE);
-        malloc_head = malloc_begin;
+        malloc_begin = (char*) sbrk(0);
+        malloc_end = (char*) sbrk(PAGE_SIZE);
+        malloc_head = (void*) malloc_begin;
         malloc_head->size = sizeof(struct flist);
         
         malloc_head->nlink = NULL;
@@ -39,7 +39,7 @@ void* malloc(unsigned int size)
     {
         if ((int)(iter->nlink) - iter->size - (int)iter >= size)
         {
-            struct flist *temp = (char *)iter + (iter->size);
+            struct flist *temp = (void*) ((char *)iter + (iter->size));
             temp->nlink = iter->nlink;
             iter->nlink = temp;
             temp->size = size;
@@ -50,8 +50,8 @@ void* malloc(unsigned int size)
     // not found
     int expand = size - (malloc_end - (char *)iter - (iter->size));
     expand = ((expand + PAGE_SIZE - 1) / PAGE_SIZE) * PAGE_SIZE;
-    malloc_end = sbrk(expand);
-    iter->nlink = (char *)iter + (iter->size);
+    malloc_end = (char*) sbrk(expand);
+    iter->nlink = (void*) ((char *)iter + (iter->size));
     iter = iter->nlink;
     iter->size = size;
     iter->nlink = NULL;
@@ -71,7 +71,7 @@ int free(void* addr)
     // find a place to insert
     while(iter)
     {
-        if (iter == real_addr)
+        if ((void*) iter == (void*) real_addr)
         {
             last->nlink = iter->nlink;
             if (last->nlink == NULL)
@@ -79,7 +79,7 @@ int free(void* addr)
                 char *pos = (char *)last + last->size;
                 if (malloc_end - pos > PAGE_SIZE * 2)
                 {
-                    malloc_end = sbrk(-((malloc_end - pos) / PAGE_SIZE * PAGE_SIZE));
+                    malloc_end = (void*) sbrk(-((malloc_end - pos) / PAGE_SIZE * PAGE_SIZE));
                 }
             }
             return 0;

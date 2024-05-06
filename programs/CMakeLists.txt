@@ -30,18 +30,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -nostdinc")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-pic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-pie")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -no-pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -nostdlib")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-use-cxa-atexit")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-red-zone")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-mmx")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-sse")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-sse2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -e main1")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
 
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
 

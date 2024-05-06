@@ -26,6 +26,7 @@ int Utility::CaluPageNeed(unsigned int memoryneed, unsigned int pagesize)
 	return pageRequired;
 }
 
+#if 0  // use libyrosstd instead
 void Utility::StringCopy(char* src, char* dst)
 {
 	while ( (*dst++ = *src++) != 0 ) ;
@@ -44,6 +45,7 @@ int Utility::StringLength(char* pString)
 	/* ·µ»Ø×Ö·û´®³¤¶È */
 	return length;
 }
+#endif 
 
 void Utility::CopySeg2(unsigned long src, unsigned long des)
 {

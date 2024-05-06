@@ -3,6 +3,8 @@
 #include "Utility.h"
 #include "TimeInterrupt.h"
 
+#include "libyrosstd/string.h"
+
 /*==========================class FileManager===============================*/
 FileManager::FileManager()
 {
@@ -833,17 +835,17 @@ void FileManager::SetCurDir(char* pathname)
 	/* 路径不是从根目录'/'开始，则在现有u.u_curdir后面加上当前路径分量 */
 	if ( pathname[0] != '/' )
 	{
-		int length = Utility::StringLength(u.u_curdir);
+		int length = strlen(u.u_curdir);
 		if ( u.u_curdir[length - 1] != '/' )
 		{
 			u.u_curdir[length] = '/';
 			length++;
 		}
-		Utility::StringCopy(pathname, u.u_curdir + length);
+		strcpy(u.u_curdir + length, pathname);
 	}
 	else	/* 如果是从根目录'/'开始，则取代原有工作目录 */
 	{
-		Utility::StringCopy(pathname, u.u_curdir);
+		strcpy(u.u_curdir, pathname);
 	}
 }
 

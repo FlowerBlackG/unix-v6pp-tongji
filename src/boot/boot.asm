@@ -54,7 +54,7 @@ start:
 		mov bx, vesa_video_mode_code
 		mov ax, 0x4F02
 		int 0x10
-%endif USE_VESA
+%endif
 
 
 		lgdt [gdtr]

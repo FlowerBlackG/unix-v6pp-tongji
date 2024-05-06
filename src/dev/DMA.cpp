@@ -166,6 +166,6 @@ void DMA::Start(enum DMAType type, unsigned long baseAddress)
 	/* 将PRD Table的物理起始地址写入PRDTR寄存器 */
 	IOPort::OutDWord(DMA::PRDTR_PORT, baseAddress);
 	/* 根据读、写类型启动一次DMA */
-	IOPort::OutByte(DMA::COMMAND_PORT, type | DMA::START);
+	IOPort::OutByte(DMA::COMMAND_PORT, int(type) | int(DMA::START));
 	return;
 }

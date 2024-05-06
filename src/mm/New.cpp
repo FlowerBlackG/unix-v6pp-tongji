@@ -24,7 +24,7 @@ void* operator new (unsigned int size)
 	}
 	else
 	{
-		return 0;
+		return nullptr;
 	}
 }
 

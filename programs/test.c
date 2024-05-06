@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <sys.h>
+#include <file.h>
+#include <string.h>
 
 #define READ 0
 #define WRITE 1

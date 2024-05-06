@@ -1,5 +1,6 @@
 #include "sys.h"
 #include "stdlib.h"
+#include "stdio.h"
 
 int execv(char *pathname, char *argv[])
 {
@@ -68,7 +69,6 @@ int sleep(unsigned int seconds)
 }
 
 /* 使用errno需要include "stdlib.h" */
-extern errno;
 int brk(void * newEndDataAddr)
 {
 	int res;
@@ -188,7 +188,7 @@ int sbrk(int increment)
 		fakeedata = brk(0);
 	}
 	unsigned int newedata = fakeedata + increment - 1;
-	brk(((newedata >> 12) + 1) << 12);
+	brk((void*) (((newedata >> 12) + 1) << 12));
 	fakeedata = newedata + 1;
 	return fakeedata;
 }

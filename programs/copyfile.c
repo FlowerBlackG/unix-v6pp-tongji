@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys.h>
+#include <file.h>
 
 int main1(int argc, char* argv[])
 {
@@ -21,7 +22,7 @@ int main1(int argc, char* argv[])
 	int rbytes = 0;
 	int wbytes = 0;
 	char buf[512];
-	while ( rbytes = read(fdSrc, buf, 512) )
+	while ( (rbytes = read(fdSrc, buf, 512)) )
 	{
 		if ( rbytes < 0 )
 		{

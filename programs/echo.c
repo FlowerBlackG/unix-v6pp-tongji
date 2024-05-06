@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys.h>
 
 int main1(int argc, char* argv[])
 {
@@ -14,4 +15,6 @@ int main1(int argc, char* argv[])
 	printf("\n");
 
 	exit(0);
+
+	return 0;
 }

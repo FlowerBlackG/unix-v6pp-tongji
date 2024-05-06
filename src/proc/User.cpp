@@ -1,6 +1,7 @@
 #include "User.h"
 #include "Kernel.h"
 #include "Utility.h"
+#include "libyrosstd/string.h"
 
 void User::Setuid()
 {
@@ -53,7 +54,7 @@ void User::Getgid()
 
 void User::Pwd()
 {
-	Utility::StringCopy(this->u_curdir, this->u_dirp);
+	strcpy(this->u_dirp, this->u_curdir);
 }
 
 bool User::SUser()

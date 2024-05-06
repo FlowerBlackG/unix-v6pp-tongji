@@ -65,6 +65,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-sse")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-sse2")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcmodel=large")  # 编译64位内核时需启用
 
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
+
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
 
 # 子目录。

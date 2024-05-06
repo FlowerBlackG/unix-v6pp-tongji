@@ -194,7 +194,7 @@ void main1(int argc, char **argv)
                     strcat(pathbuf, item + 4); // to get real path
 
                     // get inode infos:
-                    ret = stat(pathbuf, &inode);
+                    ret = stat(pathbuf, (unsigned long) &inode);
                     if (ret == -1)
                     {
                         printf("Cannot read inode!\n");

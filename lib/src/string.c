@@ -21,8 +21,9 @@ int strcmp(unsigned char* dst, unsigned char* src)
 char* strcpy(char* dst, char* src)
 {
     char * cp = dst;
-    while( *cp++ = *src++ );
-    return ( dst );
+    while( (*(cp++) = *(src++)) )
+		;
+    return dst;
 }
 
 char* strcat(char* dst, char* src)
@@ -30,14 +31,14 @@ char* strcat(char* dst, char* src)
     char * cp = dst;
     while( *cp ) 
 		++cp;           /* Find end of dst */
-    while( *cp++ = *src++ );/* Copy src to end of dst */
-    return( dst );
+    while( (*(cp++) = *(src++)) );/* Copy src to end of dst */
+    return dst ;
 }
 
 int strlen (char* str)
 {
     int length = 0;
-    while( *str++ ) ++length;
+    while( *(str++) ) ++length;
 	return( length );
 }
 

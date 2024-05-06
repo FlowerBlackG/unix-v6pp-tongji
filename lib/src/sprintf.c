@@ -269,6 +269,6 @@ int _sprintf(char* buffer, char* fmt, va pva)
 
 int sprintf(char* buffer, char* fmt, ...)
 {
-	va pva = getvahead(fmt);
+	va pva = (va) getvahead(fmt);
 	return _sprintf(buffer, fmt, pva);	
 }

@@ -268,7 +268,12 @@ loop:
 	X86Assembly::CLI();
 	for ( int i = 0; i < ProcessManager::NPROC; i++ )
 	{
-		if ( this->process[i].p_flag & (Process::SSYS | Process::SLOCK | Process::SLOAD) == Process::SLOAD && (this->process[i].p_stat == Process::SWAIT || this->process[i].p_stat == Process::SSTOP) )
+
+		bool pFlagIsSLOAD = (this->process[i].p_flag & (int(Process::SSYS) | int(Process::SLOCK) | int(Process::SLOAD))) == int(Process::SLOAD);
+
+		bool statIsSWAITOrSSTOP = (this->process[i].p_stat == Process::SWAIT || this->process[i].p_stat == Process::SSTOP);
+
+		if (pFlagIsSLOAD && statIsSWAITOrSSTOP)
 		{
 			goto found1;
 		}
@@ -286,8 +291,11 @@ loop:
 	seconds = -1;
 	for ( int i = 0; i < ProcessManager::NPROC; i++ )
 	{
-		if ( this->process[i].p_flag & (Process::SSYS | Process::SLOCK | Process::SLOAD) == Process::SLOAD && (this->process[i].p_stat == Process::SWAIT || this->process[i].p_stat == Process::SSTOP) && pSelected->p_time > seconds )
-		{
+
+		bool pFlagIsSLOAD = (this->process[i].p_flag & (int(Process::SSYS) | int(Process::SLOCK) | int(Process::SLOAD))) == int(Process::SLOAD);
+		bool pStatIsSWAITOrSSTOP = this->process[i].p_stat == Process::SWAIT || this->process[i].p_stat == Process::SSTOP;
+
+		if ( pFlagIsSLOAD && pStatIsSWAITOrSSTOP && pSelected->p_time > seconds ) {
 			pSelected = &(this->process[i]);
 			seconds = pSelected->p_time;
 		}
@@ -660,7 +668,7 @@ void ProcessManager::Exec()
 
 	/* 将fakeStack中备份的用户栈参数复制到新进程图像的用户栈中 */
 	//Utility::MemCopy(fakeStack | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - parser.StackSize, parser.StackSize);
-	Utility::MemCopy(fakeStack + allocLength - parser.StackSize | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - parser.StackSize, parser.StackSize);
+	Utility::MemCopy((fakeStack + (unsigned long)(allocLength) - parser.StackSize) | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - parser.StackSize, parser.StackSize);
 	/* 释放用于读入exe文件和备份用户栈参数的内存：mapAddress和fakeStack */
 	kernelPgMgr.FreeMemory(allocLength, fakeStack);
 

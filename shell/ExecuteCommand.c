@@ -5,6 +5,7 @@
 #include "sys.h"
 #include "stdio.h"
 #include "string.h"
+#include "file.h"
 #define stdin 0
 #define stdout 1
 
@@ -77,7 +78,7 @@ void ExecuteTPAR( struct commandNode* node, struct commandNode* parent, int* pip
 void ExecuteTCOM( struct commandNode* node, struct commandNode* parent, int* pipes)
 {
 	int state;
-	if ( strcmp(node->commandName, "cd" ) == 0 )
+	if ( strcmp( (unsigned char*) node->commandName, (unsigned char*) "cd" ) == 0 )
 	{
 		if ( argsCnt == 1 )
 		{

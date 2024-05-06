@@ -43,10 +43,12 @@ public:
 
 	static int CaluPageNeed(unsigned int memoryneed, unsigned int pagesize);
 
+#if 0  // use libyrosstd instead
 	static void StringCopy(char* src, char* dst);
 
 	static int StringLength(char* pString);
-	
+#endif
+
 	/* @comment
 	 * 用于从物理地址src copy 到物理地址des 1个byte
 	 */

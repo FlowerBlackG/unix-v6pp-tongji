@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <sys.h>
+#include <string.h>
 
 int main1(int argc, char *argv[])
 {
 	int temp,pre,post; 
 	struct tms tms_info;
-	memset(&tms_info, 0, sizeof(tms_info));
+	memset((void*) &tms_info, 0, sizeof(tms_info));
 	if(argc < 2)
 	{
 		printf("Require more argument!\n");

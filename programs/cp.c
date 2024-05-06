@@ -31,7 +31,7 @@ void cpfile(char *source,char *dest)
 	
 	int rbytes = 0;
 	int wbytes = 0;
-	while ( rbytes = read(fds, buf, 512) )
+	while ( (rbytes = read(fds, buf, 512)) )
 	{
 		if ( rbytes < 0 )
 		{
@@ -63,7 +63,7 @@ void cpdir(char * source,char * dest,char * filename)
     struct st_inode inode,inodet;
     
     
-    if(stat(source,&inode)==-1)
+    if(stat(source, (unsigned long) &inode)==-1)
     {
          printf("Inode of \'%s\' cannot be read!\n",source);
          return;
@@ -79,7 +79,7 @@ void cpdir(char * source,char * dest,char * filename)
     {
        //if there is no file under destinition dir with the same name as
        //the source file:
-         if(stat(destbuf,&inodet)!=1) 
+         if(stat(destbuf, (unsigned long)&inodet)!=1) 
          {   
              //creat a file with the source's name under dest dir
                creat(destbuf,0777);
@@ -110,7 +110,7 @@ void cpdir(char * source,char * dest,char * filename)
           if(fd==-1)
           printf("Wrong file \'%s\'!\n",source);
           //if there is no dir with the same name as the source dir,creat one
-          if(stat(destbuf,&inodet)!=1)
+          if(stat(destbuf, (unsigned long)&inodet)!=1)
           {
                if(mknod(destbuf,040755,0)==-1)
                {
@@ -255,11 +255,11 @@ void main1(int argc, char ** argv)
        //Find out whether target file existed
        //if target file does not exist
        
-       if(stat(path[(*pathi)-1],&inodet)!=1)
+       if(stat(path[(*pathi)-1], (unsigned long)&inodet)!=1)
        {
                if((*pathi)==2)
                {
-                          if(stat(path[0],&inode)==-1)
+                          if(stat(path[0], (unsigned long)&inode)==-1)
                           {
                                   printf("Wrong file \'%s\'!\n",path[0]);
                                           return;
@@ -299,7 +299,7 @@ void main1(int argc, char ** argv)
                       
                      if((*pathi)==2)
                      {                  
-                          if(stat(path[0],&inode)==-1)
+                          if(stat(path[0], (unsigned long)&inode)==-1)
                           {
                                   printf("Wrong file \'%s\'!\n",path[0]);
                                           return;
@@ -370,7 +370,7 @@ void main1(int argc, char ** argv)
                             for(j=0;j<20;j++)
                                   filename[j]='\0';
                             GetFileName(path[i],filename);
-                           if(stat(path[i],&inode)==-1)
+                           if(stat(path[i], (unsigned long) &inode)==-1)
                            {
                                 printf("Wrong file \'%s\'!",path[i]);
                            }    

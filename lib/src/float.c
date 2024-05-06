@@ -29,7 +29,7 @@ int float_getExponent(float f)
 float float_getLeft(float f)
 {
 	int exponent = float_getExponent(f);	
-	unsigned int* pf = &f;
+	unsigned int* pf = (unsigned int*) &f;
 	unsigned int mask = 0xffffffff;
 	int prec = FLOAT_MANTISSA_BITS - exponent;
 	unsigned int maskbits = 1;

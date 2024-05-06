@@ -16,7 +16,7 @@ void rm_r(char *path)
       //   (*flag)=1;
          return;
     }        
-    if(stat(path,&inode)==-1)
+    if(stat(path, (unsigned long) &inode)==-1)
     {
         printf("Inode of %s cannot be read!\n",path);
       //  (*flag)=1;
@@ -185,7 +185,7 @@ if(flag==1)
                 }
                 else
                 {     
-                     if(stat(path[i],&inode)!=1)
+                     if(stat(path[i], (unsigned long) &inode)!=1)
                        {
                          printf("Wrong file \'%s\'!\n",path[i]);
                          
@@ -213,7 +213,7 @@ if(flag==1)
                 }
                 else
                 {     
-                     if(stat(path[i],&inode)==-1)
+                     if(stat(path[i], (unsigned long) &inode)==-1)
                        {
                          printf("Wrong file \'%s\'!\n",path[i]);
                          

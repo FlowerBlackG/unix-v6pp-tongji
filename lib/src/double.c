@@ -25,7 +25,7 @@ unsigned int double_getExponent(double lf)
 double double_getLeft(double lf)
 {
 	int exponent = double_getExponent(lf);
-	struct w_int* plf = &lf;
+	struct w_int* plf = (void*) &lf;
 	unsigned int mask = 0xffffffff;
 	int prec = DOUBLE_MANTISSA_BITS - exponent;
 	unsigned int maskbits = 1;

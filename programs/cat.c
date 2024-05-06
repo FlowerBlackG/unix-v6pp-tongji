@@ -14,7 +14,7 @@ void display(char *path)
    {
        	int rbytes = 0;
 		int wbytes = 0;
-		while ( rbytes = read(fd, string, 256) )
+		while ( ( rbytes = read(fd, string, 256) ) )
 		{
 			if ( rbytes < 0 )
 			{

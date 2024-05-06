@@ -29,8 +29,8 @@ if((*optind)<argc)
         
         for(i=0;i<optionsi;i++)
         {
-           if(!strcmp(options[i].shortopt,argv[(*optind)])||\
-              !strcmp(options[i].longopt,argv[(*optind)]))
+           if(!strcmp( (unsigned char*) options[i].shortopt, (unsigned char*) argv[(*optind)])||\
+              !strcmp( (unsigned char*) options[i].longopt, (unsigned char*) argv[(*optind)]))
            {flag=1;break;} 
         }    
   
