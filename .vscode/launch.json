@@ -17,7 +17,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerServerAddress": "localhost:1234",
+            "miDebuggerServerAddress": "${workspaceFolder}/target/qemu-gdb.sock",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

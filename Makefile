@@ -95,6 +95,8 @@ QEMU += -rtc base=localtime
 QEMU += -d cpu_reset -D target/qemu.log 
 QEMU += -machine pc 
 QEMU += -cpu Icelake-Server 
+QEMU_GDB := -chardev socket,path=target/qemu-gdb.sock,server=on,wait=off,id=gdb0 
+QEMU_GDB += -gdb chardev:gdb0 -S 
 
 QEMU_DISK := -boot c -drive file=target/c.img,if=ide,index=0,media=disk,format=raw
 
@@ -106,7 +108,7 @@ qemu-no-rebuild:
 
 .PHONY: qemug-no-rebuild
 qemug-no-rebuild:
-	$(QEMU) $(QEMU_DISK) -s -S
+	$(QEMU) $(QEMU_DISK) $(QEMU_GDB)
 
 
 .PHONY: qemu
