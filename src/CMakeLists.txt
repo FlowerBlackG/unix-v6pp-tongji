@@ -5,7 +5,7 @@
     by 2051565 GTY
 ]]
 
-cmake_minimum_required(VERSION 3.29.2)
+cmake_minimum_required(VERSION 3.20)
 
 # ¿ÉÑ¡Ïî
 option(USE_VESA "enable VESA support and use it as console's backend." ON)
