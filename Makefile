@@ -31,14 +31,14 @@ prepare:
 build-programs: prepare
 	mkdir -p target/objs/apps
 	mkdir -p build/apps && cd build/apps \
-	&& cmake -G"Ninja" ../../programs && \
+	&& cmake -G"Ninja" ../../programs -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && \
 	cmake --build . -- -j 4
 
 
 .PHONY: build-lib
 build-lib: prepare
 	mkdir -p build/lib && cd build/lib \
-	&& cmake -G"Ninja" ../../lib/src \
+	&& cmake -G"Ninja" ../../lib/src -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 	&& cmake --build . -- -j 4
 	mkdir -p target/objs
 	cp build/lib/libv6pptongji.a target/objs/libv6pptongji.a
@@ -47,7 +47,7 @@ build-lib: prepare
 .PHONY: build-shell
 build-shell: prepare
 	mkdir -p build/shell && cd build/shell \
-	&& cmake -G"Ninja" ../../shell && \
+	&& cmake -G"Ninja" ../../shell -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && \
 	cmake --build . -- -j 2
 	mkdir -p target/objs
 	cp build/shell/Shell.exe target/objs/
@@ -59,7 +59,7 @@ build-shell: prepare
 .PHONY: build-kernel
 build-kernel: prepare
 	mkdir -p build/kernel && cd build/kernel \
-	&& cmake -G"Ninja" ../../src && \
+	&& cmake -G"Ninja" ../../src -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && \
 	cmake --build . -- -j 1
 
 

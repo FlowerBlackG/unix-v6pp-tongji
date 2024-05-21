@@ -1,4 +1,12 @@
 {
     "files.encoding": "gb18030",
-    "C_Cpp.default.compilerPath": "/usr/bin/g++"
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    
+    // if you have clangd or whatever depends on compile databaes, you
+    // could configure your arguments here
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/build/kernel/"
+    ],
+    // or you may use /usr/bin/clangd-18 which depends on your ENV
+    "clangd.path": "/usr/bin/clangd" 
 }

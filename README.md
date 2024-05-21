@@ -107,11 +107,20 @@ QEMU 模拟的芯片组默认关闭 DMA 功能，需要手动开启。
 
 当前代码已在以下软件环境成功运行：
 
-* `Arch Linux`
-* `GNU/Linux 6.8.7-arch1-Adashima-T2 PREEMPT_DYNAMIC`
-* `gcc version 13.2.1 20240417`
-* `GNU gdb 14.2`
-* `cmake version 3.29.2`
-* `GNU Make 4.4.1`
-* `QEMU version 9.0.0 (qemu-system-i386)`
-* `KDE Plasma 6.0.4 (Wayland)`
+ - **`Arch Linux`**
+ `GNU/Linux 6.8.7-arch1-Adashima-T2 PREEMPT_DYNAMIC`
+ `gcc version 13.2.1 20240417`
+ `GNU gdb 14.2`
+ `cmake version 3.29.2`
+ `GNU Make 4.4.1`
+ `QEMU version 9.0.0 (qemu-system-i386)`
+ `KDE Plasma 6.0.4 (Wayland)`
+
+- **`Debian 12`**
+`GNU/Linux 6.1.0-21-amd64`
+`gcc (Debian 12.2.0-14) 12.2.0`
+`GNU gdb (Debian 13.1-3) 13.1`
+`cmake version 3.25.1`
+`GNU Make 4.3`
+`QEMU version 7.2.9 (qemu-system-i386)`
+`KDE Plasma 5.27.5 (X11)`

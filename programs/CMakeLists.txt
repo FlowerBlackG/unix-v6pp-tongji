@@ -7,7 +7,8 @@
 
 
 
-cmake_minimum_required(VERSION 3.29.2)
+cmake_minimum_required(VERSION 3.20)
+project(apps C) #erase warning on lower cmake version
 
 
 string(TIMESTAMP build_time_iso8601 UTC)  # example: 2024-04-19T13:39Z
