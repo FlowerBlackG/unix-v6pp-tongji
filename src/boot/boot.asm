@@ -27,7 +27,7 @@ org 0x7c00
 ;
 ;   https://github.com/FlowerBlackG/YurongOS/blob/master/src/boot/boot.asm
 ;   added by GTY
-vesa_video_mode equ 0x118
+vesa_video_mode equ 0x143
 vesa_video_mode_code equ (vesa_video_mode | 0x4000)
 
 
