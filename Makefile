@@ -78,6 +78,7 @@ deploy-full: build-full
 	cp target/objs/apps/* target/img-workspace/programs/bin/
 	cp target/objs/Shell.exe target/img-workspace/programs/
 	cp tools/unix-v6pp-filesystem-editor/bin/* target/img-workspace/
+	cp tools/unixv6pp_splash/v6pp_splash.bmp target/img-workspace/programs/etc/
 	cd target/img-workspace && ./filescanner | ./fsedit c.img c
 	cp target/img-workspace/c.img target/
 

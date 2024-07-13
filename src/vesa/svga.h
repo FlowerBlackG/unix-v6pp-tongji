@@ -131,7 +131,10 @@ inline void putPixel(int32_t x, int32_t y, int32_t color) {
 }
 
 
-}
-}
+void clear(int32_t color = 0);
+
+
+}  // namespace svga
+}  // namespace video
 
 #endif

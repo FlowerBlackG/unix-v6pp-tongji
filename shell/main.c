@@ -8,12 +8,18 @@
 #include "PreExecute.h"
 #include "string.h"
 
+int splash();  // splash.c
+
+
 char line[1000] = {0};
 char* args[50] = {0};
 int argsCnt = 0;
 int main1()
 {
+	splash();
+
 	printf("welcome to Unix V6++ Tongji's Edition!\n");
+
 	char lineInput[512];
 	getPath( curPath );	
 	int root;

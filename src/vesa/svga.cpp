@@ -33,8 +33,19 @@ void init(VbeModeInfo* modeInfo) {
 }
 
 
+void clear(int32_t color) {
+    for (int i = 0; i < modeInfo->pitch / bytesPerPixel * modeInfo->height; i++) {
+        int8_t* pixel = screen + i * bytesPerPixel;
+        pixel[0] = color & 0xff;
+        pixel[1] = (color >> 8) & 0xff;
+        pixel[2] = color >> 16;
+    }
+}
 
-}
-}
+
+
+
+}  // namespace svga
+}  // namespace video
 
 #endif
