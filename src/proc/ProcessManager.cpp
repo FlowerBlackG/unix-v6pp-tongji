@@ -7,6 +7,7 @@
 #include "PEParser.h"
 #include "Regs.h"
 #include "MemoryDescriptor.h"
+#include "ELF.h"
 
 unsigned int ProcessManager::m_NextUniquePid = 0;
 
@@ -498,26 +499,39 @@ void ProcessManager::Exec()
 		return;
 	}
 
-	PEParser parser;
+	PEParser peParser;
+	ELF::Parser elfParser;
+	bool isPE = peParser.HeaderLoad(pInode);
+	bool isELF = false;
+	if (!isPE) {
+		isELF = elfParser.load(pInode) == 0;
+	}
 
-    if ( parser.HeaderLoad(pInode)==false )
+    if ( !isPE && !isELF )
     {
         fileMgr.m_InodeTable->IPut(pInode);
         return;
     }
 
  	/* 获取分析PE头结构得到正文段的起始地址、长度 */
-	u.u_MemoryDescriptor.m_TextStartAddress = parser.TextAddress;
-	u.u_MemoryDescriptor.m_TextSize = parser.TextSize;
+	auto textAddr = isPE ? peParser.TextAddress : elfParser.textAddr;
+	u.u_MemoryDescriptor.m_TextStartAddress = textAddr;
+
+	auto textSize = isPE ? peParser.TextSize : elfParser.textSize;
+	u.u_MemoryDescriptor.m_TextSize = textSize;
 
 	/* 数据段的起始地址、长度 */
-	u.u_MemoryDescriptor.m_DataStartAddress = parser.DataAddress;
-	u.u_MemoryDescriptor.m_DataSize = parser.DataSize;
+	auto dataAddr = isPE ? peParser.DataAddress : elfParser.dataAddr;
+	u.u_MemoryDescriptor.m_DataStartAddress = dataAddr;
+
+	auto dataSize = isPE ? peParser.DataSize : elfParser.dataSize;
+	u.u_MemoryDescriptor.m_DataSize = dataSize;
 
 	/* 堆栈段初始化长度 */
-	u.u_MemoryDescriptor.m_StackSize = parser.StackSize;
+	auto stackSize = isPE ? peParser.StackSize : elfParser.stackSize;
+	u.u_MemoryDescriptor.m_StackSize = stackSize;
 	
-	if ( parser.TextSize + parser.DataSize + parser.StackSize  + PageManager::PAGE_SIZE > MemoryDescriptor::USER_SPACE_SIZE - parser.TextAddress)
+	if ( textSize + dataSize + stackSize  + PageManager::PAGE_SIZE > MemoryDescriptor::USER_SPACE_SIZE - textAddr)
 	{
 		fileMgr.m_InodeTable->IPut(pInode);
 		u.u_error = User::ENOMEM;
@@ -530,7 +544,7 @@ void ProcessManager::Exec()
 	 * 分配好新进程图像之后，再将fakeStack中的备份参数拷贝到新进程的用户栈中。
 	 */
 	//unsigned long fakeStack = kernelPgMgr.AllocMemory(parser.StackSize);
-	int allocLength = (parser.StackSize + PageManager::PAGE_SIZE * 2 - 1) >> 13 << 13;
+	int allocLength = (stackSize + PageManager::PAGE_SIZE * 2 - 1) >> 13 << 13;
 	unsigned long fakeStack = kernelPgMgr.AllocMemory(allocLength);
 
 	int argc = u.u_arg[1];
@@ -618,7 +632,7 @@ void ProcessManager::Exec()
 	}
 
 
-	int sharedText = 0;
+	bool sharedText = false;
 
 	/* 没有可共享的现成Text结构，进行相应初始化 */
 	if ( NULL != pText )
@@ -645,7 +659,7 @@ void ProcessManager::Exec()
 	else
 	{
 		pText = u.u_procp->p_textp;
-		sharedText = 1;
+		sharedText = true;
 	}
 
 	unsigned int newSize = ProcessManager::USIZE + u.u_MemoryDescriptor.m_DataSize + u.u_MemoryDescriptor.m_StackSize;
@@ -653,13 +667,17 @@ void ProcessManager::Exec()
 	u.u_procp->Expand(newSize);
 
 	/* 根据正文段、数据段、堆栈段长度建立相对地址映照表，并加载到页表中 */
-	u.u_MemoryDescriptor.EstablishUserPageTable(parser.TextAddress, parser.TextSize, parser.DataAddress, parser.DataSize, parser.StackSize);
+	u.u_MemoryDescriptor.EstablishUserPageTable(textAddr, textSize, dataAddr, dataSize, stackSize);
 
 	/* 从exe文件中依次读入.text段、.data段、.rdata段、.bss段 */
-	parser.Relocate(pInode, sharedText);
+	if (isPE) {
+		peParser.Relocate(pInode, sharedText);
+	} else {
+		elfParser.relocate(pInode, sharedText);
+	}
 
 	/* .text段在swap分区上留复本 */
-	if(sharedText == 0)
+	if(!sharedText)
 	{
 		u.u_procp->p_flag |= Process::SLOCK;
 		bufMgr.Swap(pText->x_daddr, pText->x_caddr, pText->x_size, Buf::B_WRITE);
@@ -668,7 +686,7 @@ void ProcessManager::Exec()
 
 	/* 将fakeStack中备份的用户栈参数复制到新进程图像的用户栈中 */
 	//Utility::MemCopy(fakeStack | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - parser.StackSize, parser.StackSize);
-	Utility::MemCopy((fakeStack + (unsigned long)(allocLength) - parser.StackSize) | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - parser.StackSize, parser.StackSize);
+	Utility::MemCopy((fakeStack + (unsigned long)(allocLength) - stackSize) | 0xC0000000, MemoryDescriptor::USER_SPACE_SIZE - stackSize, stackSize);
 	/* 释放用于读入exe文件和备份用户栈参数的内存：mapAddress和fakeStack */
 	kernelPgMgr.FreeMemory(allocLength, fakeStack);
 
@@ -706,7 +724,7 @@ void ProcessManager::Exec()
 	}
 
 	/* 将exe程序的入口地址放入核心栈现场保护区中的EAX作为系统调用返回值，这个是runtime要用  */
-	u.u_ar0[User::EAX] = parser.EntryPointAddress;
+	u.u_ar0[User::EAX] = isPE ? peParser.EntryPointAddress : elfParser.entryPointAddr;
 	
 	/* 构造出Exec()系统调用的退出环境，使之退出到ring3时，开始执行user code */
 	struct pt_context* pContext = (struct pt_context *)u.u_arg[4];

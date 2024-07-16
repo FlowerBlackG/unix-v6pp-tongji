@@ -20,7 +20,7 @@ PEParser::PEParser(unsigned long peAddress)
 	this->peAddress = peAddress + 0xC0000000;   // pe头的虚地址
 }
 
-unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
+unsigned int PEParser::Relocate(Inode* p_inode, bool sharedText)
 {
 	User& u = Kernel::Instance().GetUser();
 	unsigned long srcAddress, desAddress;
@@ -36,7 +36,7 @@ unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
 	/*如果与其它进程共享正文段，共享正文段切不可清0*/
 
 	int secIdxInit = !!sharedText;
-	if (sharedText != 1)
+	if (!sharedText)
 	{
 		// 修改正文段的读写标志，为内核写代码段做准备
 		for (i0 = textBegin; i0 < textBegin + textLength; i0++)
@@ -114,7 +114,7 @@ unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
 		cnt += sectionHeader->Misc.VirtualSize;
 	}
 
-	if(sharedText == 0)
+	if(!sharedText)
 	{   //将正文段页面改回只读
 		for (i0 = 0; i0 < textLength; i0++)
 			pointer[i0].m_ReadWriter = 0;
@@ -129,26 +129,6 @@ unsigned int PEParser::Relocate(Inode* p_inode, int sharedText)
 	return 	cnt;
 }
 
-#if 0
-/* 原来V6++使用的代码，现废弃不用了 */
-unsigned int PEParser::Relocate()
-{
-	unsigned long srcAddress, desAddress;
-	unsigned cnt = 0;
-
-	for (unsigned int i = 0; i < this->BSS_SECTION_IDX; i++ )
-	{
-		ImageSectionHeader* sectionHeader = &(this->sectionHeaders[i]);
-		srcAddress = this->peAddress + sectionHeader->PointerToRawData;
-		desAddress = 
-			this->ntHeader.OptionalHeader.ImageBase + sectionHeader->VirtualAddress;
-		Utility::MemCopy(srcAddress, desAddress, sectionHeader->Misc.VirtualSize);
-		cnt += sectionHeader->Misc.VirtualSize;
-	}
-
-	return 	cnt;
-}
-#endif
 
 bool PEParser::HeaderLoad(Inode* p_inode)
 {

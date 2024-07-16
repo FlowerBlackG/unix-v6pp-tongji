@@ -75,7 +75,7 @@ SystemCallTableEntry SystemCall::m_SystemEntranceTable[SYSTEM_CALL_NUM] =
 	{ 0, &Sys_Nosys	},				/* 59 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 60 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 61 = nosys	*/
-	{ 0, &Sys_v6pptty_clear	},				/* 62 = v6pptty_clear	*/
+	{ 1, &Sys_v6pptty_clear	},		/* 62 = v6pptty_clear	*/
 	{ 0, &Sys_Nosys	},				/* 63 = nosys	*/
 };
 
@@ -735,7 +735,7 @@ int SystemCall::Sys_v6pptty_clear() {
 	
 	// todo: permission check
 
-	int32_t color = u.u_arg[1];
+	int32_t color = u.u_arg[0];
 	video::svga::clear(color);
 
 	return 0;

@@ -209,6 +209,11 @@ void Machine::InitPageDirectory()
 
 	this->m_PageDirectory = pPageDirectory;
 	this->m_KernelPageTable = pPageTable;	
+
+
+	// disable memory mapping for 0x0 (nullptr).
+	pPageDirectory->m_Entrys[0].m_Present = 0;
+	pPageDirectory->m_Entrys[0].m_PageTableBaseAddress = 0;
 }
 
 

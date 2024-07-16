@@ -131,6 +131,18 @@ Unix V6++看上去是2008年开发完成的，至今（2024年4月30日）已有差不多15年历史。其部
 +unsigned int SwapperManager::SWAPPER_ZONE_START_BLOCK = 18200;
 ```
 
+#### PE Parser
+
+原版PE Parser假定了每个段的名字和位次，但新版编译器不一定遵循该规范，导致可执行程序可能无法正确加载。新PE Parser改用字符串匹配的方式寻找需要的程序段，以解决该问题。
+
+此外，原 PE Parser 部分代码存在错误，已对部分问题进行修复。
+
+见：[git commit](https://github.com/FlowerBlackG/unix-v6pp-tongji/commit/9601efc2a8a99b7587aadade963fc64ae06b1d8e#diff-6fe8cd06b96adeca203104e06aaedc863e105a96bbb2dc2707b5f6777f9498b1)
+
+#### 新增支持：ELF
+
+考虑到 ELF 是 Unix 家族正统的可执行文件格式，且 GNU/Linux 下的 GDB 加载 PE 格式文件会出问题，特实现 ELF 格式加载器。
+
 #### PSE
 
 在启动引导过程中，启用 CPU PSE 功能，以支持 4MB 大页映射。
@@ -164,5 +176,4 @@ QEMU 模拟的芯片组默认关闭 DMA 功能，需要手动开启。
 例：
 
 1. 使用参考（抄的）自 `glibc` 的 `strlen` 函数，一次性可以判断 4 个字节。
-2. 支持快速内存拷贝的 `memcpy`，在入参整齐时一次性拷贝 4 字节。这个改进可以很大程度提升 VESA Console 的滚屏体验。
-
+2. 支持快速内存拷贝的 `memcpy`，在入参整齐时一次性拷贝 4 字节。这个改进可以很大程度提升 VESA Console 的滚屏体验（其实可以考虑使用AVX或SSE指令进一步加速）。

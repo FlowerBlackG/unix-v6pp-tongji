@@ -51,7 +51,6 @@ build-shell: prepare
 	cmake --build . -- -j 2
 	mkdir -p target/objs
 	cp build/shell/Shell.exe target/objs/
-	objcopy --remove-section .comment target/objs/Shell.exe
 	objdump -d target/objs/Shell.exe > target/asm-dump/Shell.exe.text.asm  # optional
 	objdump -D target/objs/Shell.exe > target/asm-dump/Shell.exe.full.asm  # optional
 

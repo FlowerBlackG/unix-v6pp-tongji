@@ -12,12 +12,17 @@ typedef struct {
 } BmpImage;
 
 
+char buf[2048];
+
+
 static int drawImg(const char* filePath) {
     int file = open(filePath, 0111);
 
     if (file == -1) {
         return -1;
     }
+
+    read(file, buf, 2048);
 
     // todo
 
@@ -31,7 +36,7 @@ int splash() {
 
     drawImg(SPLASH_BMP);
 
-    sleep(3);
+    //sleep(1);
     __v6pptty_clear(0);
 
     return 0;

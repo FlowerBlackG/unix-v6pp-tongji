@@ -137,7 +137,7 @@ public:
 	 * exe各个section的信息，同时需要首先map好页表，否则会失败
 	 */
 	unsigned int Relocate();
-	unsigned int Relocate(Inode* p_inode, int sharedText);
+	unsigned int Relocate(Inode* p_inode, bool sharedText);
 
     bool HeaderLoad(Inode* p_inode);
 
