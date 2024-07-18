@@ -58,7 +58,7 @@ set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
     项目构造产物
 ]]
 file(GLOB_RECURSE C_SOURCE_FILES *.c)
-set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 -m elf_i386 -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
+set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 -m i386pe -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
 set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
 add_executable(
     ${PROJECT_NAME} 
