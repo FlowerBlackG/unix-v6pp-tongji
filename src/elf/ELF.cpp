@@ -59,6 +59,9 @@ Parser::~Parser() {
 
 
 int Parser::load(Inode* inode) {
+
+// todo
+    Utility::Panic("ELF Parser is buggy. Check include/ elf/elf.h for details.\n");
     
     User& u = Kernel::Instance().GetUser();
     KernelPageManager& kpm = Kernel::Instance().GetKernelPageManager();

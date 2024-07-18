@@ -6,6 +6,22 @@
 // https://www.wikiwand.com/en/Executable_and_Linkable_Format
 // https://wiki.osdev.org/ELF
 
+
+// [critical] [todo]
+// bug: 
+//
+//     fork() call will fail for elf executables' runtime...
+//     I guess that's something related to paging.
+//     To see it, you can change 'i386pe' to 'elf_i386' in CMakeLists.txt.
+//     If you solved this, please let me know! My WeChat: 2466375479
+//     You can also make a pull request.
+//
+//     And, I find that Unix V6++ can't catch Null Pointer Exception(s).
+//
+//
+//                                               2051565 GTY  2024.7.19
+//
+
 #pragma once
 
 #include "../libyrosstd/sys/types.h"
