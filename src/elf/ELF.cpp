@@ -265,41 +265,25 @@ int Parser::relocate(Inode* inode, bool sharedText) {
             // data or bss. all set to 0.
 
             memset((void*) ent.vaddr, 0, ent.memorySize);
-        }
-    }
+        
+        } else if (sharedText) {
+            // read-only things
 
-    const char* wantedSections[] = {
-        ".text", ".rodata", ".eh_frame", ".data", ".bss", 
-    };
-    int secIdxInit = sharedText ? 3 : 0;
-
-    const int wantedSectionsSize = sizeof(wantedSections) / sizeof(wantedSections[0]);
-
-    for (int i = 0; i < this->elfHeader32.shnum; i++) {
-        auto& ent = this->sectionHeaders[i];
-        bool wanted = false;
-        for (int secIdx = secIdxInit; secIdx < wantedSectionsSize; secIdx++) {
-            if (strcmp(wantedSections[secIdx], this->nameOf(ent)) == 0) {
-                wanted = true;
-                break;
-            }
-        }
-
-        if (!wanted) {
             continue;
         }
 
-
-        if (ent.size) {
-            u.u_IOParam.m_Base = (unsigned char*) ent.addr;
+        if (ent.fileSize) {
+            u.u_IOParam.m_Base = (unsigned char*) ent.vaddr;
             u.u_IOParam.m_Offset = ent.offset;
-            u.u_IOParam.m_Count = ent.size;
+            u.u_IOParam.m_Count = ent.fileSize;
+
             inode->ReadI();
         }
     }
 
+
     if (!sharedText) {
-        for (int i = 0; i < textLength; i++) {
+        for (int i = textBegin; i < textBegin + textLength; i++) {
             ptr[i].m_ReadWriter = 0;
         }
 
