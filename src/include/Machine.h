@@ -31,7 +31,7 @@ public:
 	static const unsigned long PAGE_DIRECTORY_BASE_ADDRESS = 0x200000;
 	static const unsigned long KERNEL_PAGE_TABLE_BASE_ADDRESS = 0x201000;
 
-	static const unsigned long VESA_PAGE_TABLE_BASE_ADDR = 0x2000000;  // place it over 32M
+	static const unsigned long VESA_PAGE_TABLE_BASE_ADDR = 32 * 1024 * 1024;  // place it over 32M
 
 	static const unsigned long USER_PAGE_TABLE_BASE_ADDRESS = 0x202000;
 	static const unsigned long USER_PAGE_TABLE_CNT = 2;

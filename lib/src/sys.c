@@ -192,3 +192,10 @@ int sbrk(int increment)
 	fakeedata = newedata + 1;
 	return fakeedata;
 }
+
+
+int __v6pptty_clear(int color) {
+	int res;
+	__asm__ volatile ("int $0x80":"=a"(res):"a"(62),"b"(color) );
+	return res;
+}

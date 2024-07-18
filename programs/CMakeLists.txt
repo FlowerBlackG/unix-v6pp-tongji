@@ -54,7 +54,7 @@ set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
 ]]
 file(GLOB_RECURSE CPP_SOURCE_FILES *.cpp)
 file(GLOB_RECURSE C_SOURCE_FILES *.c)
-set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -m i386pe -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
+set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 -m i386pe -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
 set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
 
 foreach(src IN LISTS C_SOURCE_FILES)

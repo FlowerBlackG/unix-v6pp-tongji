@@ -209,6 +209,7 @@ void Machine::InitPageDirectory()
 
 	this->m_PageDirectory = pPageDirectory;
 	this->m_KernelPageTable = pPageTable;	
+
 }
 
 

@@ -82,4 +82,7 @@ int trace(int lines);
 
 
 
+int __v6pptty_clear(int color);
+
+
 #endif

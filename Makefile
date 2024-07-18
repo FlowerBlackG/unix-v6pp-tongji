@@ -51,7 +51,6 @@ build-shell: prepare
 	cmake --build . -- -j 2
 	mkdir -p target/objs
 	cp build/shell/Shell.exe target/objs/
-	objcopy --remove-section .comment target/objs/Shell.exe
 	objdump -d target/objs/Shell.exe > target/asm-dump/Shell.exe.text.asm  # optional
 	objdump -D target/objs/Shell.exe > target/asm-dump/Shell.exe.full.asm  # optional
 
@@ -78,6 +77,7 @@ deploy-full: build-full
 	cp target/objs/apps/* target/img-workspace/programs/bin/
 	cp target/objs/Shell.exe target/img-workspace/programs/
 	cp tools/unix-v6pp-filesystem-editor/bin/* target/img-workspace/
+	cp tools/unixv6pp_splash/v6pp_splash.bmp target/img-workspace/programs/etc/
 	cd target/img-workspace && ./filescanner | ./fsedit c.img c
 	cp target/img-workspace/c.img target/
 
