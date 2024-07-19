@@ -199,3 +199,11 @@ int __v6pptty_clear(int color) {
 	__asm__ volatile ("int $0x80":"=a"(res):"a"(62),"b"(color) );
 	return res;
 }
+
+
+int __v6pptty_draw_splash(int datapack_ptr) {
+	int res;
+	__asm__ volatile ("int $0x80":"=a"(res):"a"(63),"b"(datapack_ptr) );
+	return res;
+}
+

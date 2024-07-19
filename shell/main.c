@@ -16,7 +16,7 @@ char* args[50] = {0};
 int argsCnt = 0;
 int main1()
 {
-	splash();
+	//splash();
 
 	printf("welcome to Unix V6++ Tongji's Edition!\n");
 

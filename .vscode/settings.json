@@ -8,5 +8,14 @@
         "--compile-commands-dir=${workspaceFolder}/build/kernel/"
     ],
     // or you may use /usr/bin/clangd-18 which depends on your ENV
-    "clangd.path": "/usr/bin/clangd" 
+    "clangd.path": "/usr/bin/clangd",
+    "files.associations": {
+        "*.def": "cpp",
+        "*.s": "asm-intel-x86-generic",
+        "types.h": "c",
+        "stdlib.h": "c",
+        "newt.h": "c",
+        "stdio.h": "c",
+        "__splash.h": "c"
+    }
 }

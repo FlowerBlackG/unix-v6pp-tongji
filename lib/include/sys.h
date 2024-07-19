@@ -84,5 +84,6 @@ int trace(int lines);
 
 int __v6pptty_clear(int color);
 
+int __v6pptty_draw_splash(int datapack_ptr);
 
 #endif

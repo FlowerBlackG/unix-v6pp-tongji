@@ -228,7 +228,7 @@ private:
 	static int Sys_v6pptty_clear();
 
 	/* 63 */
-	static int Sys_v6pptty_mmap();
+	static int Sys_v6pptty_draw_splash();
 
 private:
 	/*系统调用入口表的声明*/
