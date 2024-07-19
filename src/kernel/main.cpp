@@ -106,7 +106,7 @@ void main0(void)
 {
 	Machine& machine = Machine::Instance();
 
-	Chip8253::Init(20);	//初始化时钟中断芯片
+	Chip8253::Init(60);	//初始化时钟中断芯片
 	Chip8259A::Init();
 	Chip8259A::IrqEnable(Chip8259A::IRQ_TIMER);		
 	DMA::Init();
