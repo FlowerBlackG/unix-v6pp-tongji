@@ -230,6 +230,7 @@ private:
 	/* 63 */
 	static int Sys_v6pptty_mmap();
 
+
 private:
 	/*系统调用入口表的声明*/
 	static SystemCallTableEntry m_SystemEntranceTable[SYSTEM_CALL_NUM];

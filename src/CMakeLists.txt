@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 3.20)
 
 # ¿ÉÑ¡Ïî
 option(USE_VESA "enable VESA support and use it as console's backend." ON)
+option(ENABLE_SPLASH "enable splash at boot." ON)
 
 
 string(TIMESTAMP build_time_iso8601 UTC)  # example: 2024-04-19T13:39Z
@@ -27,6 +28,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 # VESA Support
 if (USE_VESA)
     add_compile_definitions(USE_VESA)
+endif()
+
+# splash
+if (ENABLE_SPLASH)
+    add_compile_definitions(ENABLE_SPLASH)
 endif()
 
 

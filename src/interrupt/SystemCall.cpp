@@ -75,7 +75,7 @@ SystemCallTableEntry SystemCall::m_SystemEntranceTable[SYSTEM_CALL_NUM] =
 	{ 0, &Sys_Nosys	},				/* 59 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 60 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 61 = nosys	*/
-	{ 1, &Sys_v6pptty_clear	},		/* 62 = v6pptty_clear	*/
+	{ 0, &Sys_Nosys	},				/* 62 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 63 = nosys	*/
 };
 
@@ -724,26 +724,3 @@ int SystemCall::Sys_Ssig()
 }
 
 
-/* 62  count = 1 (color) */
-int SystemCall::Sys_v6pptty_clear() {
-	User& u = Kernel::Instance().GetUser();
-	
-	if (u.u_uid != 0) {
-		// todo: permission check
-	}
-
-	
-	// todo: permission check
-
-	int32_t color = u.u_arg[0];
-	video::svga::clear(color);
-
-	return 0;
-}
-
-/* 63 */
-int SystemCall::Sys_v6pptty_mmap() {
-
-
-	return 0;
-}

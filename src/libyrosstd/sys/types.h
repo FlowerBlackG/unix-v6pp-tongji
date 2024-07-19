@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <libyrosstd/stdint.h>
+#include "../stdint.h"
 
 /** ÎÄ¼ş½áÎ²¡£ */
 #ifndef EOF

@@ -80,9 +80,4 @@ int getswtch();
 /* 启用屏幕底部的lines行输出调试信息 */
 int trace(int lines);
 
-
-
-int __v6pptty_clear(int color);
-
-
 #endif
