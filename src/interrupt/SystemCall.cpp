@@ -75,8 +75,8 @@ SystemCallTableEntry SystemCall::m_SystemEntranceTable[SYSTEM_CALL_NUM] =
 	{ 0, &Sys_Nosys	},				/* 59 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 60 = nosys	*/
 	{ 0, &Sys_Nosys	},				/* 61 = nosys	*/
-	{ 1, &Sys_v6pptty_clear	},		/* 62 = v6pptty_clear	*/
-	{ 1, &Sys_v6pptty_draw_splash	},	/* 63 = v6pptty_draw_splash	*/
+	{ 0, &Sys_Nosys	},				/* 62 = nosys	*/
+	{ 0, &Sys_Nosys	},				/* 63 = nosys	*/
 };
 
 SystemCall::SystemCall()
@@ -724,43 +724,3 @@ int SystemCall::Sys_Ssig()
 }
 
 
-/* 62  count = 1 (color) */
-int SystemCall::Sys_v6pptty_clear() {
-	User& u = Kernel::Instance().GetUser();
-	
-	if (u.u_uid != 0) {
-		// todo: permission check
-	}
-
-	
-	// todo: permission check
-
-	int32_t color = u.u_arg[0];
-	video::svga::clear(color);
-
-	return 0;
-}
-
-/* 63 */
-#include "../include/__splash.h"
-int SystemCall::Sys_v6pptty_draw_splash() {
-	User& u = Kernel::Instance().GetUser();
-	
-	auto data = (__v6pptty_draw_splash_datapack*) u.u_arg[0];
-
-	Diagnose::Write("ksplash: received: \n");
-	Diagnose::Write("  size: %d %d\n", data->width, data->height);
-
-	
-	for (int w = 0; w < data->width; w++) {
-		for (int h = 0; h < data->height; h++) {
-			auto pPixel = (int*) (data->buf + (w + h * data->width) * 4);
-			int color = *pPixel;
-			video::svga::putPixel(w, data->height - h, color);
-		}
-	}
-
-	// todo
-
-	return 0;
-}

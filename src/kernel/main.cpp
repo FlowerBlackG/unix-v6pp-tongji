@@ -200,6 +200,9 @@ extern "C" void Delay()
 }
 #endif
 
+
+int splash();
+
 extern "C" void next()
 {
 	
@@ -283,6 +286,12 @@ extern "C" void next()
 		Utility::Panic("STDOUT Error!");
 	}
 	Diagnose::TraceOn();
+
+
+#ifdef ENABLE_SPLASH
+	// show splash.
+	splash();
+#endif
 
 
 	unsigned char* runtimeSrc = (unsigned char*)runtime;

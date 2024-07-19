@@ -220,15 +220,8 @@ private:
 	/*	48 = sig	count = 2	*/
 	static int Sys_Ssig();
 	
-	/*	49 ~ 61 = nosys	count = 0	*/	
+	/*	49 ~ 63 = nosys	count = 0	*/	
 
-
-	/* ------ Designed for v6pp tty. Not generic. ------ */
-	/* 62  count = 1 (color) */
-	static int Sys_v6pptty_clear();
-
-	/* 63 */
-	static int Sys_v6pptty_draw_splash();
 
 private:
 	/*系统调用入口表的声明*/
