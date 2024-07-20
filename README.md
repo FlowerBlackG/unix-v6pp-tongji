@@ -143,6 +143,14 @@ Unix V6++看上去是2008年开发完成的，至今（2024年4月30日）已有差不多15年历史。其部
 
 考虑到 ELF 是 Unix 家族正统的可执行文件格式，且 GNU/Linux 下的 GDB 加载 PE 格式文件会出问题，特实现 ELF 格式加载器。
 
+#### Splash
+
+开机时闪烁开屏图片。
+
+![img](tools/unixv6pp_splash/v6pp_splash.bmp)
+
+可以在 `src/CMakeLists.txt` 里禁用。
+
 #### PSE
 
 在启动引导过程中，启用 CPU PSE 功能，以支持 4MB 大页映射。
