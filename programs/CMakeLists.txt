@@ -54,36 +54,56 @@ set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
 ]]
 file(GLOB_RECURSE CPP_SOURCE_FILES *.cpp)
 file(GLOB_RECURSE C_SOURCE_FILES *.c)
-set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 -m i386pe -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
+set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 <LINK_FLAGS> -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
 set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
 
-foreach(src IN LISTS C_SOURCE_FILES)
-    string(REGEX REPLACE "[.]c$" ".exe" exe ${src})
-    get_filename_component(exeName ${exe} NAME_WE)
-    add_executable(${exeName} ${src})
-    target_link_libraries(${exeName} ${CMAKE_SOURCE_DIR}/../target/objs/libv6pptongji.a)
-    set_target_properties(
-        ${exeName} PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -e main1"
-    )
 
-    set(APPS_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps)
+#[[
+    
+    params:
+      exeFormat: elf_i386 or i386pe
+]]
+function(addExe exeName src exeFormat binDir)
+
+    set(taskName "${exeName}-${exeFormat}")
+    add_executable(${taskName} ${src})
+    target_link_libraries(${taskName} ${CMAKE_SOURCE_DIR}/../target/objs/libv6pptongji.a)
+
+    set_target_properties(
+        ${taskName} 
+        PROPERTIES 
+            COMPILE_FLAGS "-m32" 
+            LINK_FLAGS "-m32 -m ${exeFormat}"
+    )
+    
     add_custom_command(
-        TARGET ${exeName} POST_BUILD
+        TARGET ${taskName} POST_BUILD
         COMMAND
             ${CMAKE_COMMAND} -E copy 
-                $<TARGET_FILE:${exeName}> 
-                ${APPS_BIN_DIR}/${exeName}
+                $<TARGET_FILE:${taskName}> 
+                ${binDir}/${exeName}
     )
 
     set(ASM_DUMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../target/asm-dump/apps")
     file(MAKE_DIRECTORY ${ASM_DUMP_DIR})
 
-#    (optional)
-#    add_custom_command(
-#        TARGET ${exeName} POST_BUILD
-#        COMMAND
-#            objdump -D ${APPS_BIN_DIR}/${exeName} > ${ASM_DUMP_DIR}/${exeName}.full.asm
-#    )
+    if (0)  # optional
+        add_custom_command(
+            TARGET ${taskName} POST_BUILD
+            COMMAND
+                objdump -D ${binDir}/${exeName} > ${ASM_DUMP_DIR}/${taskName}.full.asm
+        )
+    endif()
+endfunction(addExe)
+
+
+foreach(src IN LISTS C_SOURCE_FILES)
+    string(REGEX REPLACE "[.]c$" ".exe" exe ${src})
+
+    get_filename_component(exeName ${exe} NAME_WE)
+    addExe(${exeName} ${src} "elf_i386" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps-elf" )
+    addExe(${exeName} ${src} "i386pe" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps")
+
 
 endforeach()
 
