@@ -3,8 +3,16 @@
 # 创建于 2024年4月28日 上海市嘉定区
 # by 2051565 GTY
 
-
 .DEFAULT_GOAL := all
+FILE_SYS_TOOLS_BIN_DIR:=tools/unix-v6pp-filesystem-editor/bin
+TOOLS:=$(sort $(wildcard $(FILE_SYS_TOOLS_BIN_DIR)/*))
+
+ifeq ($(word 1, $(TOOLS)),)
+$(error "filescanner not found. please run 'bash init.sh' first")
+endif
+ifeq ($(word 2, $(TOOLS)),)
+$(error "fsedit not found. please run 'bash init.sh' first")
+endif
 
 
 .PHONY: help
