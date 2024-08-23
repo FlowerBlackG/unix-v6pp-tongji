@@ -14,8 +14,6 @@ string(TIMESTAMP build_time_human_readable "%B %d, %Y %H:%M:%S %Z")
 set(V6PP_BUILD_TIME_ISO8601 ${build_time_iso8601})
 set(V6PP_BUILD_TIME_HUMAN_READABLE ${build_time_human_readable})
 
-project(Shell.exe)
-
 
 # 头文件路径。
 include_directories("${PROJECT_SOURCE_DIR}")
@@ -58,19 +56,44 @@ set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
     项目构造产物
 ]]
 file(GLOB_RECURSE C_SOURCE_FILES *.c)
-set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 -m i386pe -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
+set(CMAKE_CXX_LINK_EXECUTABLE "ld --whole-archive -Ttext-segment=0x400000 <LINK_FLAGS> -e main1 -static <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
 set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
-add_executable(
-    ${PROJECT_NAME} 
-    
-    ${C_SOURCE_FILES}
-)
-target_link_libraries(
-    ${PROJECT_NAME}
 
-    ${CMAKE_SOURCE_DIR}/../target/objs/libv6pptongji.a
-)
-set_target_properties(
-    ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -e main1"
-)
+
+function(addExe exeName src exeFormat binDir)
+
+    set(taskName "${exeName}-${exeFormat}")
+    add_executable(${taskName} ${src})
+    target_link_libraries(${taskName} ${CMAKE_SOURCE_DIR}/../target/objs/libv6pptongji.a)
+
+    set_target_properties(
+        ${taskName} 
+        PROPERTIES 
+            COMPILE_FLAGS "-m32" 
+            LINK_FLAGS "-m32 -m ${exeFormat}"
+    )
+
+    add_custom_command(
+        TARGET ${taskName} POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E copy 
+                $<TARGET_FILE:${taskName}> 
+                ${binDir}/${exeName}
+    )
+
+    set(ASM_DUMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../target/asm-dump")
+    file(MAKE_DIRECTORY ${ASM_DUMP_DIR})
+
+    if (0)  # optional
+        add_custom_command(
+            TARGET ${taskName} POST_BUILD
+            COMMAND
+                objdump -D ${binDir}/${exeName} > ${ASM_DUMP_DIR}/${taskName}.full.asm
+        )
+    endif()
+endfunction(addExe)
+
+
+addExe(Shell.elf.exe "${C_SOURCE_FILES}" "elf_i386" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs")
+addExe(Shell.exe "${C_SOURCE_FILES}" "i386pe" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs")
 

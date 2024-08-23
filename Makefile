@@ -58,7 +58,6 @@ build-shell: prepare
 	&& cmake -G"Ninja" ../../shell -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && \
 	cmake --build . -- -j 2
 	mkdir -p target/objs
-	cp build/shell/Shell.exe target/objs/
 	objdump -d target/objs/Shell.exe > target/asm-dump/Shell.exe.text.asm  # optional
 	objdump -D target/objs/Shell.exe > target/asm-dump/Shell.exe.full.asm  # optional
 

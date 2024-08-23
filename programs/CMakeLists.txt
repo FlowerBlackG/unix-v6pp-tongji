@@ -101,7 +101,7 @@ foreach(src IN LISTS C_SOURCE_FILES)
     string(REGEX REPLACE "[.]c$" ".exe" exe ${src})
 
     get_filename_component(exeName ${exe} NAME_WE)
-    addExe(${exeName} ${src} "elf_i386" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps-elf" )
+    addExe(${exeName} ${src} "elf_i386" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps-elf")
     addExe(${exeName} ${src} "i386pe" "${CMAKE_CURRENT_SOURCE_DIR}/../target/objs/apps")
 
 
