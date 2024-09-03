@@ -5,7 +5,7 @@
 # 创建于 2024年8月4日 上海市嘉定区
 # by 2252707 CYT
 
-FILE_SYS_EDITOR_REPO='https://github.com/FlowerBlackG/unix-v6pp-filesystem-editor.git'
+FILE_SYS_EDITOR_REPO='https://git.tongji.edu.cn/vesper-system/unix-v6pp-filesystem-editor.git'
 FILE_SYS_EDITOR_SRC='tools/unix-v6pp-filesystem-editor/src'
 FILE_SYS_SCANNER='filescanner'
 FILE_SYS_EDITOR='fsedit'
