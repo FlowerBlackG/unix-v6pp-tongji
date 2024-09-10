@@ -44,7 +44,7 @@ public:
 	void FormGDTR(GDTR& gdtr);
 	
 private:
-	SegmentDescriptor m_Descriptors[256];	/* 256 * 8 Bytes */
+	SegmentDescriptor m_Descriptors[256] = {0};	/* 256 * 8 Bytes */
 };
 
 #endif

@@ -35,6 +35,8 @@ vesa_video_mode_code equ (vesa_video_mode | 0x4000)
 [BITS 16]
 start:
 
+		mov esp, 0x7C00  ; 暂用栈
+
 %ifdef USE_VESA
 		; 读取 VESA 信息。
 		xor ax, ax
@@ -198,11 +200,39 @@ gdt:
 		dw	0x9200		
 		dw	0x00CF		
 		
+
+		; limit    : 0xfffff
+		; base     : 0x40000000
+		; access   : 0
+		; rw       : 1
+		; dc       : 0
+		; exec     : 1
+		; descType : code/data
+		; privi lv : 0
+		; present  : 1
+		; longMode : 0
+		; sizeFlag : 32 bits
+		; granular : 4 KB
+
 		dw	0xFFFF		
 		dw	0x0000		
 		dw	0x9A00		
 		dw	0x40CF		
 		
+
+		; limit    : 0xfffff
+		; base     : 0x40000000
+		; access   : 0
+		; rw       : 1
+		; dc       : 0
+		; exec     : 0
+		; descType : code/data
+		; privi lv : 0
+		; present  : 1
+		; longMode : 0
+		; sizeFlag : 32 bits
+		; granular : 4 KB
+
 		dw	0xFFFF		
 		dw	0x0000		
 		dw	0x9200		
@@ -212,5 +242,8 @@ gdtr:
 		dw $-gdt		;limit
 		dd gdt			;offset
 
+		dw 0xabfb  ; just a marker
+
 		times 510 - ($ - $$) db 0
+		
 		dw 0xAA55
