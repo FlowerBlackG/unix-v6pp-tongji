@@ -102,6 +102,7 @@ QEMU += -rtc base=localtime
 QEMU += -d cpu_reset -D target/qemu.log 
 QEMU += -machine pc 
 QEMU += -cpu Icelake-Server 
+QEMU += -enable-kvm 
 QEMU_GDB := -chardev socket,path=target/qemu-gdb.sock,server=on,wait=off,id=gdb0 
 QEMU_GDB += -gdb chardev:gdb0 -S 
 
