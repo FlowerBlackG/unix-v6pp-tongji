@@ -26,6 +26,7 @@ add_executable(boot boot.asm)
 add_custom_command(
     OUTPUT ${BOOT_OUTPUT_DIR}/sector2.o
     COMMAND nasm -f elf32 ${CMAKE_CURRENT_SOURCE_DIR}/sector2.asm -o ${BOOT_OUTPUT_DIR}/sector2.o
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sector2.asm
 )
 set(NULL_CPP_FILE_PATH "${CMAKE_BINARY_DIR}/_yros_cmake_hack/null.cpp")
 file(WRITE ${NULL_CPP_FILE_PATH} "")
