@@ -246,44 +246,67 @@ int vsprintf(char* buffer, const char* format, va_list args) {
                 uint8_t base = (specifier == 'o' ? 8 : 10);
                 uint32_t mask;
                 uint32_t val;
-
-                if (lengthSpecifier == __VPF_LENGTH_CHAR) {
-                    mask = (1ULL << (sizeof(char) * 8)) - 1;
-                    val = va_arg(args, int) & mask;
-                } else if (lengthSpecifier == __VPF_LENGTH_SHORT) {
-                    mask = (1ULL << (sizeof(short) * 8)) - 1;
-                    val = va_arg(args, int) & mask;
-                } else if (lengthSpecifier == __VPF_LENGTH_LONG) {
-                    mask = (1ULL << (sizeof(long) * 8)) - 1;
-                    val = va_arg(args, long) & mask;
-                } else if (lengthSpecifier == __VPF_LENGTH_LONG_LONG) {
-                    mask = (1ULL << (sizeof(long long) * 8)) - 1;
-                    val = va_arg(args, long long) & mask;
-                } else if (lengthSpecifier == __VPF_LENGTH_INT_MAX) {
-                    mask = (1ULL << (sizeof(intmax_t) * 8)) - 1;
-                    val = va_arg(args, intmax_t) & mask;
-                } else if (lengthSpecifier == __VPF_LENGTH_SIZE_T) {
-                    mask = (1ULL << (sizeof(size_t) * 8)) - 1;
-                    val = va_arg(args, size_t) & mask;
-                } else {
-                    mask = (1ULL << (sizeof(int) * 8)) - 1;
-                    val = va_arg(args, int) & mask;
-                }
-
                 char sign = NULL;
 
-                // 判断是否为负数。
-                if (specifier == 'd' || specifier == 'i') {
-                    if (
-                        (lengthSpecifier == __VPF_LENGTH_CHAR && (char) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_SHORT && (short) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_LONG && (long) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_LONG_LONG && (long long) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_INT_MAX && (intmax_t) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_SIZE_T && (size_t) val < 0)
-                        || (lengthSpecifier == __VPF_LENGTH_NULL && (int) val < 0)
-                    ) {
+                // 先获取原始值并判断符号
+                if (lengthSpecifier == __VPF_LENGTH_CHAR) {
+                    char originalVal = (char)va_arg(args, int);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
                         sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(char) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
+                    }
+                } else if (lengthSpecifier == __VPF_LENGTH_SHORT) {
+                    short originalVal = (short)va_arg(args, int);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
+                        sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(short) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
+                    }
+                } else if (lengthSpecifier == __VPF_LENGTH_LONG) {
+                    long originalVal = va_arg(args, long);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
+                        sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(long) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
+                    }
+                } else if (lengthSpecifier == __VPF_LENGTH_LONG_LONG) {
+                    long long originalVal = va_arg(args, long long);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
+                        sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(long long) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
+                    }
+                } else if (lengthSpecifier == __VPF_LENGTH_INT_MAX) {
+                    intmax_t originalVal = va_arg(args, intmax_t);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
+                        sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(intmax_t) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
+                    }
+                } else if (lengthSpecifier == __VPF_LENGTH_SIZE_T) {
+                    size_t originalVal = va_arg(args, size_t);
+                    // size_t 是无符号类型，不需要符号判断
+                    mask = (1UL << (sizeof(size_t) * 8)) - 1;
+                    val = (uint32_t)originalVal & mask;
+                } else {
+                    int originalVal = va_arg(args, int);
+                    if ((specifier == 'd' || specifier == 'i') && originalVal < 0) {
+                        sign = '-';
+                        val = (uint32_t)(-originalVal);
+                    } else {
+                        mask = (1UL << (sizeof(int) * 8)) - 1;
+                        val = (uint32_t)originalVal & mask;
                     }
                 }
                 
