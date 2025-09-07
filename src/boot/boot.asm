@@ -23,227 +23,157 @@ org 0x7c00
 
 
 
-; vesa support
-;
-;   https://github.com/FlowerBlackG/YurongOS/blob/master/src/boot/boot.asm
-;   added by GTY
-vesa_video_mode equ 0x143
-vesa_video_mode_code equ (vesa_video_mode | 0x4000)
-
 
 ;section .code16
 [BITS 16]
-start:
+_x:
 
-		mov esp, 0x7C00  ; 暂用栈
+db 0x66, 0xbc, 0x00, 0x7c, 0x00, 0x00
 
 %ifdef USE_VESA
-		; 读取 VESA 信息。
-		xor ax, ax
-		mov es, ax
-		mov di, 0x7e00
-		mov ax, 0x4f01
-		mov cx, vesa_video_mode
-		int 0x10
+; 读取 VESA 信息。
 
-		; 设置屏幕模式为文本模式，并清空屏幕。
-		; 中断指令号为 10H，当 AH=0H 时表示设置显示模式，模式具体为 AL。
-		; AL=3H 表示文本模式，80×25，16色。
-		; AL=12H 表示图形模式，VGA 640×480 16色
-		; AX=0x4F02, BX=0x4180 表示 1440×900 32位色
-		; AX=0x4F02, BX=0x4143 表示 800×600 32位色
+db 0x31, 0xc0, 0x8e, 0xc0, 0xbf, 0x00, 0x7e, 0xb8, 0x01, 0x4f, 0xb9, 0x43, 0x01, 0xcd, 0x10
 
-		mov bx, vesa_video_mode_code
-		mov ax, 0x4F02
-		int 0x10
+
+; 设置屏幕模式为文本模式，并清空屏幕。
+; 中断指令号为 10H，当 AH=0H 时表示设置显示模式，模式具体为 AL。
+; AL=3H 表示文本模式，80×25，16色。
+; AL=12H 表示图形模式，VGA 640×480 16色
+; AX=0x4F02, BX=0x4180 表示 1440×900 32位色
+; AX=0x4F02, BX=0x4143 表示 800×600 32位色
+
+db 0xbb, 0x43, 0x41, 0xb8, 0x02, 0x4f, 0xcd, 0x10
+
 %endif
 
 
-		lgdt [gdtr]
-		
-		cli
+lgdt [__fsdkwoaie]
 
-		;打开a20 地址线
-		in al,92h
-		or al,00000010b
-		out 92h, al
+db 0xfa, 0xe4, 0x92, 0x0f, 0x20, 0xc0, 0x66, 0x83, 0xc8, 0x01, 0x0f, 0x22, 0xc0, 0x0f, 0x20, 0xe0, 0x66, 0x83, 0xc8, 0x10, 0x0f, 0x22, 0xe0
 
-;		start to load sector 1 to memory 
-		
-		mov eax, cr0;
-		or eax, 1;
-		mov cr0, eax
 
-		; enable PSE so we can use 2MB page :D  -- added by gty
-		; See:
-		;   https://www.wikiwand.com/en/Control_register#CR4
-		;   https://wiki.osdev.org/Paging
-		mov eax, cr4
-		or eax, 0b10000
-		mov cr4, eax
-				
-		jmp dword 0x8:_startup ;
+jmp dword 0x8:_01 ;
 
-	
+
 ;section .code32
 [BITS 32]
-_startup:
+_01:
 
-		mov ax, 0x10
-		mov ds, ax
-		mov es, ax
-		mov ss, ax
+db 0x66, 0xb8, 0x10, 0x00, 0x66, 0x8e, 0xd8, 0x66, 0x8e, 0xc0, 0x66, 0x8e, 0xd0, 0xb9, 0x8e, 0x01, 0x00, 0x00
+db 0xb8, 0x01, 0x00, 0x00, 0x00, 0xbb, 0x00, 0x00, 0x10, 0x00
 
-		mov	ecx, KERNEL_SIZE 	;cx = 扇区数KERNEL_SIZE，作为loop的次数
-		mov eax, 1				;LBA寻址模式下sector编号从0开始。  #0是引导扇区，#1扇区开始才是kernel的首扇区
-		mov ebx, 0x100000		;目标存放地址从1M处开始，每次loop递增512 bytes
-_load_kernel:
-		push eax
-		inc eax
-		
-		push ebx
-		add	ebx, 512
-		call _load_sector
-		loop _load_kernel		
-		
-		;修改所有寄存器到高位地址
-		mov ax, 0x20
-		mov ds, ax
-		mov es, ax
-		mov ss, ax
-		or esp, 0xc0000000
-		jmp 0x18:0xc0100000
-		
-_load_sector:
-	push ebp
-	mov ebp,esp
-	
-	push edx
-	push ecx
-	push edi
-	push eax		
-	
-	mov al,1		;读1个扇区
-	mov dx,1f2h		;扇区数寄存器 0x1f2
-	out dx,al
-	
-	mov eax,[ebp+12] ;[ebp+12]对应上面mov eax, 1   push eax指令入栈的值，eax为要读入的扇区号
-					;LBA28(Linear Block Addressing)模式输入扇区号的Bits 7~0， 共28 Bits扇区号
-	inc dx			;扇区号寄存器 0x1f3
-	out dx,al
-	
-	shr eax,8		;LBA28(Linear Block Addressing)模式输入扇区号的Bits 15~8 放入AL中， 共28 Bits扇区号
-	inc dx			;Port：DX = 0x1f3+1 = 0x1f4  
-	out dx,al
-	
-	shr eax,8		;LBA28(Linear Block Addressing)模式输入扇区号的Bits 23~16放入AL中， 共28 Bits扇区号
-	inc dx			;Port：DX = 0x1f4+1 = 0x1f5 
-	out dx,al
-	
-	shr eax,8
-	and al,0x0f
-	or al,11100000b ;Bit(7和5)为1表示是IDE接口，Bit(6)为1表示开启LBA28模式，Bit(4)为1表示主盘。
-					;Bit(3~0)为LBA28中的Bit27~24位
-	inc dx			;Port：DX = 0x1f5+1 = 0x1f6 
-	out dx,al
-	
-	mov al,0x20		;0x20表示读1个sector，0x30表示写1个sector
-	inc dx			;Port：DX = 0x1f6+1 = 0x1f7 
-	out dx,al
-	
-.test:
-	in al,dx
-	test al,10000000b
-	jnz .test
-	
-	test al,00001000b
-	jz .load_error
-	
-	
-	mov ecx,512/4
-	mov dx,0x1f0
-	mov edi,[ebp+8]	;取得call前入栈参数[ebp+8] = 0x100000  = 1MB
-	rep insd
-	xor ax,ax
-	jmp .load_exit
-	
-.load_error:
-	mov dx,0x1f1
-	in al,dx
-	xor ah,ah
-			
-.load_exit:
-	
-	pop eax		
-	pop edi
-	pop ecx
-	pop edx
-	leave		;Destory stack frame
-	retn 8		
-		
+_1:
+
+db 0x50, 0x40, 0x53, 0x81, 0xc3, 0x00, 0x02, 0x00, 0x00
+
+call _2
+loop _1		
+
+
+db 0x66, 0xb8, 0x20, 0x00, 0x66, 0x8e, 0xd8, 0x66, 0x8e, 0xc0, 0x66, 0x8e, 0xd0, 0x81, 0xcc, 0x00, 0x00, 0x00, 0xc0
+
+jmp 0x18:0xc0100000
+
+_2:
+db 0x55, 0x89, 0xe5, 0x52, 0x51, 0x57, 0x50
+db 0xb0, 0x01, 0x66, 0xba, 0xf2, 0x01, 0xee, 0x8b, 0x45, 0x0c, 0x66, 0x42, 0xee, 0xc1, 0xe8, 0x08, 0x66, 0x42, 0xee, 0xc1, 0xe8, 0x08, 0x66, 0x42, 0xee, 0xc1, 0xe8, 0x08, 0x24, 0x0f
+
+
+or al,11100000b 
+db 0x66, 0x42, 0xee
+
+db 0xb0, 0x20
+db 0x66, 0x42, 0xee
+
+
+.____2d2:
+db 0xec
+test al,0b10000000
+jnz .____2d2
+
+test al,0b00001000
+jz ._4
+
+
+db 0xb9, 0x80, 0x00, 0x00, 0x00, 0x66, 0xba, 0xf0, 0x01, 0x8b, 0x7d, 0x08, 0xf3, 0x6d, 0x66, 0x31, 0xc0
+
+jmp ._3
+
+._4:
+db 0x66, 0xba, 0xf1, 0x01, 0xec, 0x30, 0xe4
+
+
+._3:
+
+
+db 0x58, 0x5f, 0x59, 0x5a, 0xc9
+
+retn 8		
+
 ;section .data
-KERNEL_SIZE		equ		(398)	    
+KERNEL_SIZE		equ		(398)	  
 
-gdt:		
-		dw	0x0000
-		dw	0x0000
-		dw	0x0000
-		dw	0x0000
-		
-		dw	0xFFFF		
-		dw	0x0000		
-		dw	0x9A00		
-		dw	0x00CF		
-		
-		dw	0xFFFF		
-		dw	0x0000		
-		dw	0x9200		
-		dw	0x00CF		
-		
+__iuhasil:		
+dw	0x0000
+dw	0x0000
+dw	0x0000
+dw	0x0000
 
-		; limit    : 0xfffff
-		; base     : 0x40000000
-		; access   : 0
-		; rw       : 1
-		; dc       : 0
-		; exec     : 1
-		; descType : code/data
-		; privi lv : 0
-		; present  : 1
-		; longMode : 0
-		; sizeFlag : 32 bits
-		; granular : 4 KB
+dw	0xFFFF		
+dw	0x0000		
+dw	0x9A00		
+dw	0x00CF		
 
-		dw	0xFFFF		
-		dw	0x0000		
-		dw	0x9A00		
-		dw	0x40CF		
-		
+dw	0xFFFF		
+dw	0x0000		
+dw	0x9200		
+dw	0x00CF		
 
-		; limit    : 0xfffff
-		; base     : 0x40000000
-		; access   : 0
-		; rw       : 1
-		; dc       : 0
-		; exec     : 0
-		; descType : code/data
-		; privi lv : 0
-		; present  : 1
-		; longMode : 0
-		; sizeFlag : 32 bits
-		; granular : 4 KB
 
-		dw	0xFFFF		
-		dw	0x0000		
-		dw	0x9200		
-		dw	0x40CF		
-		
-gdtr:
-		dw $-gdt		;limit
-		dd gdt			;offset
+; limit    : 0xfffff
+; base     : 0x40000000
+; access   : 0
+; rw       : 1
+; dc       : 0
+; exec     : 1
+; descType : code/data
+; privi lv : 0
+; present  : 1
+; longMode : 0
+; sizeFlag : 32 bits
+; granular : 4 KB
 
-		dw 0xabfb  ; just a marker
+dw	0xFFFF		
+dw	0x0000		
+dw	0x9A00		
+dw	0x40CF		
 
-		times 510 - ($ - $$) db 0
-		
-		dw 0xAA55
+
+; limit    : 0xfffff
+; base     : 0x40000000
+; access   : 0
+; rw       : 1
+; dc       : 0
+; exec     : 0
+; descType : code/data
+; privi lv : 0
+; present  : 1
+; longMode : 0
+; sizeFlag : 32 bits
+; granular : 4 KB
+
+dw	0xFFFF		
+dw	0x0000		
+dw	0x9200		
+dw	0x40CF		
+
+__fsdkwoaie:
+dw $-__iuhasil		;limit
+dd __iuhasil			;offset
+
+dw 0xabfb  ; just a marker
+
+times 510 - ($ - $$) db 0
+
+dw 0xAA55
